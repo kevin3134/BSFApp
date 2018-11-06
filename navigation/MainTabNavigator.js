@@ -1,15 +1,17 @@
 import React from 'react';
-import { View, Text, Platform } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { TabNavigator, TabBarBottom } from 'react-navigation';
 import Colors from '../constants/Colors';
 import HomeScreen from '../screens/HomeScreen';
 import AudioBibleScreen from '../screens/AudioBibleScreen';
 import SettingsScreen from '../screens/SettingsScreen';
-import { getI18nText } from '../store/I18n';
+import BibleReadScreen from '../screens/BibleReadScreen';
 
 export default TabNavigator(
   {
+    BibleRead: {
+      screen: BibleReadScreen,
+    },
     Home: {
       screen: HomeScreen,
     },
@@ -31,6 +33,9 @@ export default TabNavigator(
             break;
           case 'AudioBible':
             iconName = 'headphones';
+            break;
+          case 'BibleRead':
+            iconName = 'bookmark';
             break;
           case 'Settings':
             iconName = 'info-circle';
