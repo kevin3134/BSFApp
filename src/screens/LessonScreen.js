@@ -140,7 +140,7 @@ class LessonScreen extends React.Component {
 
     // TODO:[Wei] KeyboardAwareScrollView works on iOS but not Android, KeyboardAvoidingView works on Android, but not iOS :(
     return (Platform.OS === 'ios') ? content : (
-      <KeyboardAvoidingView style={styles.container} behavior='padding' keyboardVerticalOffset={30}>
+      <KeyboardAvoidingView style={styles.container} behavior='padding' keyboardVerticalOffset={80}>
         {content}
       </KeyboardAvoidingView >
     );
