@@ -6,6 +6,7 @@ import LessonScreen from '../screens/LessonScreen';
 import BibleScreen from '../screens/BibleScreen';
 import SetPhoneScreen from '../screens/SetPhoneScreen';
 import AttendanceScreen from '../screens/AttendanceScreen';
+import AttendanceHomeScreen from '../screens/AttendanceHomeScreen';
 import LectureMaterialScreen from '../screens/LectureMaterialScreen';
 import GlobalChatScreen from '../screens/GlobalChatScreen';
 import HomeTrainingScreen from '../screens/HomeTrainingScreen';
@@ -35,6 +36,9 @@ const RootStackNavigator = StackNavigator(
     },
     Attendance: {
       screen: AttendanceScreen
+    },
+    AttendanceHome: {
+      screen: AttendanceHomeScreen
     },
     LectureMaterial: {
       screen: LectureMaterialScreen
