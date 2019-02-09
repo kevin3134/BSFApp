@@ -11,10 +11,10 @@ import Colors from '../constants/Colors';
 import DatePicker from 'react-native-datepicker';
 import { EventRegister } from 'react-native-event-listeners';
 
-export default class AttendanceHomeScreen extends React.Component {
+export default class AttendanceGroupScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
-      title: getI18nText('考勤表'),
+      title: getI18nText('选择小组') + ` (${navigation.state.params.lessonTitle})`,
       headerLeft: (
         <View style={{ marginLeft: 10 }}>
           <TouchableOpacity onPress={() => navigateBack()}>
@@ -27,7 +27,7 @@ export default class AttendanceHomeScreen extends React.Component {
   };
 
   state = {
-    data: null,
+    data: this.props.navigation.state.params.data,
     busy: false,
     windowWidth: Dimensions.get('window').width
   };
@@ -62,11 +62,11 @@ export default class AttendanceHomeScreen extends React.Component {
     }
   }
 
-  getRate(lesson) {
+  getRate(group, lesson) {
     let result = null;
     const attendance = this.state.data.attendance;
     for (let i in attendance) {
-      if (attendance[i].lesson === lesson) {
+      if (attendance[i].lesson === lesson && attendance[i].group === group) {
         if (!result) {
           result = `${attendance[i].rate}%`;
         } else {
@@ -83,54 +83,60 @@ export default class AttendanceHomeScreen extends React.Component {
   }
 
   render() {
-    if (!this.state.data) {
-      return (
-        <ActivityIndicator
-          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-          size='large'
-          color={Colors.yellow} />
-      );
-    }
-
     let keyIndex = 0;
-    const lessons = Array.from(Array(29).keys());
+    const groups = this.state.data.groups;
+    const lesson = this.props.navigation.state.params.lesson;
+    const lessonTitle = this.props.navigation.state.params.lessonTitle;
     return (
       <View style={{ flex: 1 }}>
         <ScrollView
           style={{ backgroundColor: 'white' }}>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: 10 }}>
-            {
-              lessons.map(lesson => {
-                const title = `第${lesson + 1}课`;
-                return (
-                  <TouchableOpacity
-                    key={keyIndex++}
-                    onPress={() => this.props.navigation.navigate('AttendanceGroup', { lesson: lesson, lessonTitle: title, data: this.state.data })}>
-                    <View style={{
-                      width: (this.state.windowWidth / 4 - 15),
-                      borderColor: '#cdcdcd',
-                      borderWidth: 0.5,
-                      borderRadius: 10,
-                      height: 80,
-                      margin: 5,
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <Text style={{
-                        fontSize: 15,
-                        fontWeight: 'bold',
-                        color: Colors.yellow
-                      }}>{title}</Text>
-                      <Text style={{
-                        fontSize: 16,
-                        fontWeight: 'bold'
-                      }}>{this.getRate(lesson)}</Text>
-                    </View>
-                  </TouchableOpacity>
-                );
-              })
-            }
-          </View>
+          {
+            groups.map(group => {
+              console.log(lesson + ':' + JSON.stringify(group));
+              if (group.lesson !== 0 && lesson !== group.lesson) {
+                return <View key={keyIndex++} />;
+              }
+
+              return (
+                <TouchableOpacity
+                  key={keyIndex++}
+                  onPress={() => this.props.navigation.navigate('AttendanceLesson', { lesson, lessonTitle, group })}>
+                  <View style={{
+                    borderColor: '#cdcdcd',
+                    backgroundColor: Colors.yellow,
+                    borderWidth: 0.5,
+                    borderRadius: 10,
+                    height: 140,
+                    margin: 5,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <Text style={{
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                      color: 'white'
+                    }}>{group.id}组</Text>
+                    <Text style={{
+                      fontSize: 16,
+                      fontWeight: 'bold',
+                      color: 'white'
+                    }}>{group.name}</Text>
+                    <Text style={{
+                      fontSize: 14,
+                      color: '#fefefe'
+                    }}>{group.lesson !== 0 ? '(你是代理组长)' : ''}</Text>
+                    <View style={{ height: 20 }} />
+                    <Text style={{
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                      color: 'white'
+                    }}>{this.getRate(group.id, lesson)}</Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            })
+          }
           <View style={{ height: 80 }} />
         </ScrollView>
       </View >
