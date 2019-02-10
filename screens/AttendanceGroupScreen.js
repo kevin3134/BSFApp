@@ -113,37 +113,35 @@ export default class AttendanceGroupScreen extends React.Component {
                     lesson, lessonTitle, group, substitute: substitutes[group.id], data: this.props.navigation.state.params.data
                   })}>
                   <View style={{
-                    borderColor: '#cdcdcd',
-                    backgroundColor: Colors.yellow,
-                    borderWidth: 0.5,
+                    borderColor: '#FFE8A1',
+                    backgroundColor: '#FFF2CC',
+                    borderWidth: 1,
                     borderRadius: 10,
-                    height: 140,
-                    margin: 5,
+                    paddingVertical: 15,
+                    marginTop: 5,
+                    marginHorizontal: 10,
                     alignItems: 'center',
                     justifyContent: 'center'
                   }}>
                     <Text style={{
                       fontSize: 20,
-                      fontWeight: 'bold',
-                      color: 'white'
+                      fontWeight: 'bold'
                     }}>{group.id}组</Text>
                     <Text style={{
                       fontSize: 16,
-                      fontWeight: 'bold',
-                      color: 'white'
+                      fontWeight: 'bold'
                     }}>{group.name}</Text>
                     {
                       substitutes[group.id] &&
                       <Text style={{
-                        fontSize: 14,
-                        color: '#fefefe'
+                        fontSize: 16,
+                        color: '#e74c3c'
                       }}>{'[' + substitutes[group.id] + getI18nText('代理') + ']'}</Text>
                     }
                     <View style={{ height: 10 }} />
                     <Text style={{
-                      fontSize: 20,
-                      fontWeight: 'bold',
-                      color: 'white'
+                      fontSize: 22,
+                      fontWeight: 'bold'
                     }}>{this.getRate(group.id, lesson)}</Text>
                   </View>
                 </TouchableOpacity>

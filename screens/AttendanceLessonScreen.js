@@ -162,10 +162,20 @@ export default class AttendanceLessonScreen extends React.Component {
     let index = 0;
     return (
       <ScrollView style={{ backgroundColor: 'white' }}>
-        <View style={{ alignItems: 'center', marginTop: 5, marginBottom: 5 }}>
+        <View style={{ flex: 1, alignItems: 'center', marginTop: 5, marginBottom: 5 }}>
           {
             this.state.substitute &&
-            <Text style={{ fontSize: 17, margin: 3 }}>{getI18nText('代理组长') + ': ' + this.state.substitute}</Text>
+            <View style={{
+              borderColor: '#FFE8A1',
+              backgroundColor: '#FFF2CC',
+              borderWidth: 1,
+              borderRadius: 10,
+              width: this.state.windowWidth - 20,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <Text style={{ fontSize: 16, margin: 3 }}>{getI18nText('代理组长') + ': ' + this.state.substitute}</Text>
+            </View>
           }
           {
             this.state.attendance.map((user) => user.checked ? (

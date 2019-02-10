@@ -72,7 +72,7 @@ export default class AttendanceHomeScreen extends React.Component {
           }
 
           rates[i] = displayName;
-          lessons.push({ id: i, displayName: getI18nText('第') + i + getI18nText('课'), rate: displayName });
+          lessons.push({ id: i, displayName: '第' + i + '课', rate: displayName });
         }
 
         this.setState({ data: data, lessons: lessons, rates: rates });
