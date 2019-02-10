@@ -28,6 +28,7 @@ export default class AttendanceGroupScreen extends React.Component {
 
   state = {
     data: this.props.navigation.state.params.data,
+    substitutes: {},
     busy: false,
     windowWidth: Dimensions.get('window').width
   };
@@ -50,11 +51,18 @@ export default class AttendanceGroupScreen extends React.Component {
   async loadAsync() {
     try {
       this.setState({ busy: true });
-      const result = await callWebServiceAsync(`${Models.HostServer}/attendanceSummary/`, getCurrentUser().getCellphone(), 'GET');
+      const lesson = this.props.navigation.state.params.lesson;
+      const result = await callWebServiceAsync(`${Models.HostServer}/attendanceSummary/${getCurrentUser().getCellphone()}/${lesson}`, '', 'GET');
       const succeed = await showWebServiceCallErrorsAsync(result, 200);
       if (succeed) {
-        this.setState({ data: result.body });
-        console.log('loadAsync: ' + JSON.stringify(this.state));
+        const data = result.body;
+        let substitutes = {};
+        for (let i in data.substitute) {
+          const item = data.substitute[i];
+          substitutes[item.group] = item.name;
+        }
+
+        this.setState({ data: data, substitutes: substitutes });
       }
     }
     finally {
@@ -87,6 +95,7 @@ export default class AttendanceGroupScreen extends React.Component {
     const groups = this.state.data.groups;
     const lesson = this.props.navigation.state.params.lesson;
     const lessonTitle = this.props.navigation.state.params.lessonTitle;
+    const substitutes = this.state.substitutes;
     return (
       <View style={{ flex: 1 }}>
         <ScrollView
@@ -100,7 +109,9 @@ export default class AttendanceGroupScreen extends React.Component {
               return (
                 <TouchableOpacity
                   key={keyIndex++}
-                  onPress={() => this.props.navigation.navigate('AttendanceLesson', { lesson, lessonTitle, group })}>
+                  onPress={() => this.props.navigation.navigate('AttendanceLesson', {
+                    lesson, lessonTitle, group, substitute: substitutes[group.id], data: this.props.navigation.state.params.data
+                  })}>
                   <View style={{
                     borderColor: '#cdcdcd',
                     backgroundColor: Colors.yellow,
@@ -127,6 +138,13 @@ export default class AttendanceGroupScreen extends React.Component {
                         fontSize: 14,
                         color: '#fefefe'
                       }}>{'(' + getI18nText('代理组长') + ')'}</Text>
+                    }
+                    {
+                      substitutes[group.id] &&
+                      <Text style={{
+                        fontSize: 14,
+                        color: '#fefefe'
+                      }}>{'(' + substitutes[group.id] + getI18nText('代理') + ')'}</Text>
                     }
                     <View style={{ height: 10 }} />
                     <Text style={{

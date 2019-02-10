@@ -1,19 +1,16 @@
 import React from 'react';
 import { ScrollView, View, Alert, Text, ActivityIndicator, Dimensions, Image, TouchableOpacity } from 'react-native';
 import { getI18nText } from '../utils/I18n';
-import { FontAwesome } from '@expo/vector-icons';
-import { CheckBox, Button } from 'react-native-elements';
+import { CheckBox } from 'react-native-elements';
 import { Models } from '../dataStorage/models';
 import { callWebServiceAsync, showWebServiceCallErrorsAsync } from '../dataStorage/storage';
-import SegmentedControlTab from 'react-native-segmented-control-tab';
 import { getCurrentUser } from '../utils/user';
 import Colors from '../constants/Colors';
-import DatePicker from 'react-native-datepicker';
 import { EventRegister } from 'react-native-event-listeners';
 
 export default class AttendanceLessonScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
-    let title = `${navigation.state.params.lessonTitle} ${navigation.state.params.group.id}组`;
+    let title = `${navigation.state.params.lessonTitle} ${navigation.state.params.group.id}${getI18nText('组')}`;
     if (navigation.state.params.group.lesson !== 0) {
       title += ' ' + getI18nText('代理组长');
     }
@@ -29,11 +26,14 @@ export default class AttendanceLessonScreen extends React.Component {
         </View>),
       headerRight: (
         <View style={{ marginRight: 10, flexDirection: 'row' }}>
-          <TouchableOpacity onPress={() => share()}>
-            <Image
-              style={{ width: 34, height: 34 }}
-              source={require('../assets/images/Share.png')} />
-          </TouchableOpacity>
+          {
+            navigation.state.params.group.lesson === 0 &&
+            <TouchableOpacity onPress={() => transfer()}>
+              <Image
+                style={{ width: 34, height: 34 }}
+                source={require('../assets/images/Share.png')} />
+            </TouchableOpacity>
+          }
           <View style={{ width: 6 }} />
           <TouchableOpacity onPress={() => submit()}>
             <Image
@@ -47,18 +47,21 @@ export default class AttendanceLessonScreen extends React.Component {
   state = {
     attendance: null,
     busy: false,
+    substitute: this.props.navigation.state.params.substitute,
     windowWidth: Dimensions.get('window').width
   };
 
   componentWillMount() {
     navigateBack = () => this.props.navigation.pop();
-    share = () => this.share();
+    transfer = () => this.transfer();
     submit = () => this.submit();
     this.listener = EventRegister.addEventListener('screenDimensionChanged', (window) => {
       this.setState({ windowWidth: window.width });
     });
 
-    this.loadAsync();
+    this.props.navigation.addListener('willFocus', () => {
+      this.loadAsync();
+    });
   }
 
   componentWillUnmount() {
@@ -81,8 +84,28 @@ export default class AttendanceLessonScreen extends React.Component {
     }
   }
 
-  async share() {
-    alert('TODO');
+  async transfer() {
+    this.props.navigation.navigate('AttendanceSelectLeader', {
+      group: this.props.navigation.state.params.group,
+      lesson: this.props.navigation.state.params.lesson,
+      data: this.props.navigation.state.params.data,
+      onSelected: this.selectTransferLeader.bind(this)
+    });
+  }
+
+  async selectTransferLeader(leader) {
+    const body = {
+      lesson: this.props.navigation.state.params.lesson,
+      group: this.props.navigation.state.params.group.id,
+      leader: leader.id,
+    }
+    const result = await callWebServiceAsync(`${Models.HostServer}/transferLeader/${getCurrentUser().getCellphone()}`, '', 'POST', [], body);
+    const succeed = await showWebServiceCallErrorsAsync(result, 201);
+
+    if (succeed) {
+      this.setState({ substitute: leader.name });
+      return succeed;
+    }
   }
 
   async submit() {
@@ -97,13 +120,12 @@ export default class AttendanceLessonScreen extends React.Component {
       }
 
       const body = {
-        class: 2,
         group: this.props.navigation.state.params.group.id,
         lesson: this.props.navigation.state.params.lesson,
         users
       };
 
-      const result = await callWebServiceAsync(`${Models.HostServer}/attendance`, `?cellphone=${getCurrentUser().getCellphone()}`, 'POST', [], body);
+      const result = await callWebServiceAsync(`${Models.HostServer}/attendance/${getCurrentUser().getCellphone()}`, '', 'POST', [], body);
       const succeed = await showWebServiceCallErrorsAsync(result, 201);
       if (succeed) {
         this.props.navigation.pop();
@@ -149,6 +171,10 @@ export default class AttendanceLessonScreen extends React.Component {
     return (
       <ScrollView style={{ backgroundColor: 'white' }}>
         <View style={{ alignItems: 'center', marginTop: 5, marginBottom: 5 }}>
+          {
+            this.state.substitute &&
+            <Text style={{ fontSize: 17, margin: 3 }}>{getI18nText('代理组长') + ': ' + this.state.substitute}</Text>
+          }
           {
             this.state.attendance.map((user) => user.checked ? (
               <CheckBox

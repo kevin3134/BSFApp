@@ -9,6 +9,7 @@ import AttendanceScreen from '../screens/AttendanceScreen';
 import AttendanceHomeScreen from '../screens/AttendanceHomeScreen';
 import AttendanceGroupScreen from '../screens/AttendanceGroupScreen';
 import AttendanceLessonScreen from '../screens/AttendanceLessonScreen';
+import AttendanceSelectLeaderScreen from '../screens/AttendanceSelectLeaderScreen';
 import LectureMaterialScreen from '../screens/LectureMaterialScreen';
 import GlobalChatScreen from '../screens/GlobalChatScreen';
 import HomeTrainingScreen from '../screens/HomeTrainingScreen';
@@ -47,6 +48,9 @@ const RootStackNavigator = StackNavigator(
     },
     AttendanceLesson: {
       screen: AttendanceLessonScreen
+    },
+    AttendanceSelectLeader: {
+      screen: AttendanceSelectLeaderScreen
     },
     LectureMaterial: {
       screen: LectureMaterialScreen

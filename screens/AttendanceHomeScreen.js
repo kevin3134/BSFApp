@@ -64,7 +64,7 @@ export default class AttendanceHomeScreen extends React.Component {
         let rates = {};
         let totalRate = 0;
         let totalRateCount = 0;
-        for (let i = 0; i < 30; i++) {
+        for (let i = 1; i < 30; i++) {
           const { displayName, value } = this.getRate(data.attendance, i);
           if (value) {
             totalRate += value;
@@ -72,7 +72,7 @@ export default class AttendanceHomeScreen extends React.Component {
           }
 
           rates[i] = displayName;
-          lessons.push({ id: i, displayName: getI18nText('第') + (i + 1) + getI18nText('课'), rate: displayName });
+          lessons.push({ id: i, displayName: getI18nText('第') + i + getI18nText('课'), rate: displayName });
         }
 
         this.setState({ data: data, lessons: lessons, rates: rates });
@@ -120,7 +120,7 @@ export default class AttendanceHomeScreen extends React.Component {
     if (count > 1) {
       this.props.navigation.navigate('AttendanceGroup', { lesson: lesson.id, lessonTitle: lesson.displayName, data: this.state.data });
     } else {
-      this.props.navigation.navigate('AttendanceLesson', { lesson: lesson.id, lessonTitle: lesson.displayName, group: lastMatchingGroup });
+      this.props.navigation.navigate('AttendanceLesson', { lesson: lesson.id, lessonTitle: lesson.displayName, data: this.state.data, group: lastMatchingGroup });
     }
   }
 
