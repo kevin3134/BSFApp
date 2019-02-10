@@ -60,8 +60,7 @@ export default class AttendanceSelectLeaderScreen extends React.Component {
 
   async onSelectd(leader) {
     const leaderId = leader.current ? this.props.navigation.state.params.data.user : leader.id;
-    const leaderName = leader.current ? null : leader.name;
-    const result = await this.props.navigation.state.params.onSelected({ id: leaderId, name: leaderName });
+    const result = await this.props.navigation.state.params.onSelected(leaderId);
     if (result) {
       this.props.navigation.pop();
     }

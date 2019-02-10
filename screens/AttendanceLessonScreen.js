@@ -10,12 +10,8 @@ import { EventRegister } from 'react-native-event-listeners';
 
 export default class AttendanceLessonScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
-    let title = `${navigation.state.params.lessonTitle} ${navigation.state.params.group.id}${getI18nText('组')}`;
-    if (navigation.state.params.group.lesson !== 0) {
-      title += ' ' + getI18nText('代理组长');
-    }
     return {
-      title: title,
+      title: `${navigation.state.params.lessonTitle} ${navigation.state.params.group.id}${getI18nText('组')}`,
       headerLeft: (
         <View style={{ marginLeft: 10 }}>
           <TouchableOpacity onPress={() => navigateBack()}>
@@ -76,7 +72,7 @@ export default class AttendanceLessonScreen extends React.Component {
       const result = await callWebServiceAsync(`${Models.HostServer}/attendance/${getCurrentUser().getCellphone()}/${group}/${lesson}`, '', 'GET');
       const succeed = await showWebServiceCallErrorsAsync(result, 200);
       if (succeed) {
-        this.setState({ attendance: result.body });
+        this.setState({ attendance: result.body.users, substitute: result.body.substitute.name });
       }
     }
     finally {
@@ -97,15 +93,11 @@ export default class AttendanceLessonScreen extends React.Component {
     const body = {
       lesson: this.props.navigation.state.params.lesson,
       group: this.props.navigation.state.params.group.id,
-      leader: leader.id,
+      leader: leader,
     }
     const result = await callWebServiceAsync(`${Models.HostServer}/transferLeader/${getCurrentUser().getCellphone()}`, '', 'POST', [], body);
     const succeed = await showWebServiceCallErrorsAsync(result, 201);
-
-    if (succeed) {
-      this.setState({ substitute: leader.name });
-      return succeed;
-    }
+    return succeed;
   }
 
   async submit() {

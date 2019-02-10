@@ -133,18 +133,11 @@ export default class AttendanceGroupScreen extends React.Component {
                       color: 'white'
                     }}>{group.name}</Text>
                     {
-                      group.lesson !== 0 &&
-                      <Text style={{
-                        fontSize: 14,
-                        color: '#fefefe'
-                      }}>{'(' + getI18nText('代理组长') + ')'}</Text>
-                    }
-                    {
                       substitutes[group.id] &&
                       <Text style={{
                         fontSize: 14,
                         color: '#fefefe'
-                      }}>{'(' + substitutes[group.id] + getI18nText('代理') + ')'}</Text>
+                      }}>{'[' + substitutes[group.id] + getI18nText('代理') + ']'}</Text>
                     }
                     <View style={{ height: 10 }} />
                     <Text style={{
