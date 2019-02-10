@@ -13,9 +13,9 @@ import { EventRegister } from 'react-native-event-listeners';
 
 export default class AttendanceLessonScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
-    let title = `${navigation.state.params.lessonTitle} - ${navigation.state.params.group.id}组`;
+    let title = `${navigation.state.params.lessonTitle} ${navigation.state.params.group.id}组`;
     if (navigation.state.params.group.lesson !== 0) {
-      title += '代理组长';
+      title += ' ' + getI18nText('代理组长');
     }
     return {
       title: title,

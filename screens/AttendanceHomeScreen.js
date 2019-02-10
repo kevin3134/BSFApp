@@ -13,8 +13,12 @@ import { EventRegister } from 'react-native-event-listeners';
 
 export default class AttendanceHomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
+    let title = getI18nText('考勤表');
+    if (navigation.state.params && navigation.state.params.rate) {
+      title += ' ' + navigation.state.params.rate;
+    }
     return {
-      title: getI18nText('考勤表'),
+      title: title,
       headerLeft: (
         <View style={{ marginLeft: 10 }}>
           <TouchableOpacity onPress={() => navigateBack()}>
@@ -28,6 +32,8 @@ export default class AttendanceHomeScreen extends React.Component {
 
   state = {
     data: null,
+    lessons: null,
+    rates: null,
     busy: false,
     windowWidth: Dimensions.get('window').width
   };
@@ -53,8 +59,26 @@ export default class AttendanceHomeScreen extends React.Component {
       const result = await callWebServiceAsync(`${Models.HostServer}/attendanceSummary/`, getCurrentUser().getCellphone(), 'GET');
       const succeed = await showWebServiceCallErrorsAsync(result, 200);
       if (succeed) {
-        this.setState({ data: result.body });
-        console.log('loadAsync: ' + JSON.stringify(this.state));
+        const data = result.body;
+        let lessons = [];
+        let rates = {};
+        let totalRate = 0;
+        let totalRateCount = 0;
+        for (let i = 0; i < 30; i++) {
+          const { displayName, value } = this.getRate(data.attendance, i);
+          if (value) {
+            totalRate += value;
+            totalRateCount++;
+          }
+
+          rates[i] = displayName;
+          lessons.push({ id: i, displayName: getI18nText('第') + (i + 1) + getI18nText('课'), rate: displayName });
+        }
+
+        this.setState({ data: data, lessons: lessons, rates: rates });
+        if (totalRateCount > 0) {
+          this.props.navigation.setParams({ rate: Math.round(totalRate / totalRateCount * 100) / 100 + '%' });
+        }
       }
     }
     finally {
@@ -62,24 +86,42 @@ export default class AttendanceHomeScreen extends React.Component {
     }
   }
 
-  getRate(lesson) {
-    let result = null;
-    const attendance = this.state.data.attendance;
+  getRate(attendance, lesson) {
+    let total = 0;
+    let count = 0;
     for (let i in attendance) {
       if (attendance[i].lesson === lesson) {
-        if (!result) {
-          result = `${attendance[i].rate}%`;
-        } else {
-          return '*';
-        }
+        total += attendance[i].rate;
+        count++;
       }
     }
 
-    if (!result) {
-      return '-';
+    if (count === 0) {
+      return { displayName: '-' };
     }
 
-    return result;
+    const value = Math.round(total / count * 100) / 100;
+    return { displayName: value + '%' + (count > 1 ? '*' : ''), value: value };
+  }
+
+  gotoGroup(lesson) {
+    let count = 0;
+    let lastMatchingGroup = null;
+    for (let i in this.state.data.groups) {
+      const group = this.state.data.groups[i];
+      if (group.lesson === 0 || lesson.id === group.lesson) {
+        lastMatchingGroup = group;
+        count++;
+        if (count > 1) {
+          break;
+        }
+      }
+    }
+    if (count > 1) {
+      this.props.navigation.navigate('AttendanceGroup', { lesson: lesson.id, lessonTitle: lesson.displayName, data: this.state.data });
+    } else {
+      this.props.navigation.navigate('AttendanceLesson', { lesson: lesson.id, lessonTitle: lesson.displayName, group: lastMatchingGroup });
+    }
   }
 
   render() {
@@ -93,7 +135,7 @@ export default class AttendanceHomeScreen extends React.Component {
     }
 
     let keyIndex = 0;
-    const lessons = Array.from(Array(29).keys());
+    const lessons = this.state.lessons;
     return (
       <View style={{ flex: 1 }}>
         <ScrollView
@@ -101,11 +143,11 @@ export default class AttendanceHomeScreen extends React.Component {
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: 10 }}>
             {
               lessons.map(lesson => {
-                const title = `第${lesson + 1}课`;
+                const title = lesson.displayName;
                 return (
                   <TouchableOpacity
                     key={keyIndex++}
-                    onPress={() => this.props.navigation.navigate('AttendanceGroup', { lesson: lesson, lessonTitle: title, data: this.state.data })}>
+                    onPress={() => this.gotoGroup(lesson)}>
                     <View style={{
                       width: (this.state.windowWidth / 4 - 15),
                       borderColor: '#cdcdcd',
@@ -124,7 +166,7 @@ export default class AttendanceHomeScreen extends React.Component {
                       <Text style={{
                         fontSize: 16,
                         fontWeight: 'bold'
-                      }}>{this.getRate(lesson)}</Text>
+                      }}>{lesson.rate}</Text>
                     </View>
                   </TouchableOpacity>
                 );
