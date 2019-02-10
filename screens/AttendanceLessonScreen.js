@@ -27,7 +27,7 @@ export default class AttendanceLessonScreen extends React.Component {
             <TouchableOpacity onPress={() => transfer()}>
               <Image
                 style={{ width: 34, height: 34 }}
-                source={require('../assets/images/Share.png')} />
+                source={require('../assets/images/assign.png')} />
             </TouchableOpacity>
           }
           <View style={{ width: 6 }} />
