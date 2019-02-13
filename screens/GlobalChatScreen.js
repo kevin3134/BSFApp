@@ -7,11 +7,13 @@ import { Constants } from 'expo';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import Colors from '../constants/Colors';
 import { EventRegister } from 'react-native-event-listeners';
+import { headerProperty } from '../navigation/AppNavigator';
 
 export default class GlobalChatScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const title = navigation.state.params && navigation.state.params.title ? navigation.state.params.title : getI18nText('聊天室');
     return {
+      ...headerProperty,
       title,
       headerLeft: (
         <View style={{ marginLeft: 10 }}>

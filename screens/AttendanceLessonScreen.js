@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Alert, Text, ActivityIndicator, Dimensions, Image, TouchableOpacity } from 'react-native';
+import { ScrollView, View, Text, ActivityIndicator, Dimensions, Image, TouchableOpacity } from 'react-native';
 import { getI18nText } from '../utils/I18n';
 import { CheckBox } from 'react-native-elements';
 import { Models } from '../dataStorage/models';
@@ -7,10 +7,12 @@ import { callWebServiceAsync, showWebServiceCallErrorsAsync } from '../dataStora
 import { getCurrentUser } from '../utils/user';
 import Colors from '../constants/Colors';
 import { EventRegister } from 'react-native-event-listeners';
+import { headerProperty } from '../navigation/AppNavigator';
 
 export default class AttendanceLessonScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
+      ...headerProperty,
       title: `${navigation.state.params.lessonTitle} ${navigation.state.params.group.id}${getI18nText('组')}`,
       headerLeft: (
         <View style={{ marginLeft: 10 }}>

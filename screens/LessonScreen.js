@@ -20,10 +20,12 @@ import ExportAnswer from '../components/ExportAnswer.js';
 import Colors from '../constants/Colors'
 import { getI18nText, getI18nBibleBook } from '../utils/I18n';
 import { getCurrentUser } from '../utils/user';
+import { headerProperty } from '../navigation/AppNavigator.js';
 
 class LessonScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
+      ...headerProperty,
       title: navigation.state.params && navigation.state.params.title ? navigation.state.params.title : '',
       headerLeft: (
         <View style={{ marginLeft: 10 }}>

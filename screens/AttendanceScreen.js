@@ -10,10 +10,12 @@ import { getCurrentUser } from '../utils/user';
 import Colors from '../constants/Colors';
 import DatePicker from 'react-native-datepicker';
 import { EventRegister } from 'react-native-event-listeners';
+import { headerProperty } from '../navigation/AppNavigator';
 
 export default class AttendanceScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
+      ...headerProperty,
       title: getI18nText('考勤表'),
       headerLeft: (
         <View style={{ marginLeft: 10 }}>

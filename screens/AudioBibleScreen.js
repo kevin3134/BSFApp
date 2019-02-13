@@ -10,6 +10,7 @@ import { getCurrentUser } from '../utils/user';
 import { Models } from '../dataStorage/models';
 import AudioPlayer from '../components/AudioPlayer';
 import { EventRegister } from 'react-native-event-listeners';
+import { headerProperty } from '../navigation/AppNavigator';
 
 const audioBookId = require('../assets/json/audioBookId.json');
 
@@ -17,6 +18,7 @@ export default class AudioBibleScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     let title = navigation.state.params && navigation.state.params.title ? navigation.state.params.title : '有声圣经';
     return {
+      ...headerProperty,
       title: getI18nText(title)
     };
   };

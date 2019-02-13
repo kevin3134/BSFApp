@@ -1,16 +1,18 @@
 import React from 'react';
-import { ScrollView, View, Alert, Text, ActivityIndicator, Dimensions, Image, TouchableOpacity } from 'react-native';
+import { ScrollView, View, ActivityIndicator, Dimensions, Image, TouchableOpacity } from 'react-native';
 import { getI18nText } from '../utils/I18n';
-import { Card, ListItem } from 'react-native-elements';
+import { ListItem } from 'react-native-elements';
 import { Models } from '../dataStorage/models';
 import { callWebServiceAsync, showWebServiceCallErrorsAsync } from '../dataStorage/storage';
 import { getCurrentUser } from '../utils/user';
 import Colors from '../constants/Colors';
 import { EventRegister } from 'react-native-event-listeners';
+import { headerProperty } from '../navigation/AppNavigator';
 
 export default class AttendanceSelectLeaderScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
+      ...headerProperty,
       title: getI18nText('请选择代理组长'),
       headerLeft: (
         <View style={{ marginLeft: 10 }}>

@@ -20,10 +20,12 @@ import { clearPassage } from '../store/passage.js'
 import { getCurrentUser } from '../utils/user';
 import { FileSystem } from 'expo';
 import { getI18nText } from '../utils/I18n';
+import { headerProperty } from '../navigation/AppNavigator';
 
 @connectActionSheet class BibleScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
+      ...headerProperty,
       title: navigation.state.params && navigation.state.params.title ? navigation.state.params.title : 'Bible',
       headerLeft: (
         <View style={{ marginLeft: 10 }}>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, View, Dimensions } from 'react-native';
 import { AppLoading } from 'expo';
-import RootNavigation from './navigation/RootNavigation';
+import AppNavigator from './navigation/AppNavigator';
 import createStore from './store/createStore'
 import { loadAsync } from './dataStorage/storage';
 import { Models } from './dataStorage/models';
@@ -40,7 +40,7 @@ export default class App extends React.Component {
           <Provider store={store}>
             <View style={{ flex: 1 }} onLayout={this.onLayout.bind(this)}>
               {Platform.OS !== 'ios' && <StatusBar barStyle="default" />}
-              <RootNavigation />
+              <AppNavigator />
             </View>
           </Provider>
         </ActionSheetProvider >

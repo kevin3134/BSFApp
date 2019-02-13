@@ -1,11 +1,13 @@
 import React from 'react';
-import { StyleSheet, View, Alert, TextInput, KeyboardAvoidingView, Keyboard, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, TextInput, KeyboardAvoidingView, Image, TouchableOpacity } from 'react-native';
 import { getI18nText } from '../utils/I18n';
 import { getCurrentUser } from '../utils/user';
+import { headerProperty } from '../navigation/AppNavigator';
 
 export default class SetPhoneScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
+      ...headerProperty,
       title: getI18nText('设置手机号码'),
       headerLeft: (
         <View style={{ marginLeft: 10 }}>

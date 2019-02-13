@@ -12,12 +12,14 @@ import { getI18nBibleBook, getI18nText } from '../utils/I18n';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import { callWebServiceAsync, showWebServiceCallErrorsAsync } from '../dataStorage/storage';
+import { headerProperty } from '../navigation/AppNavigator';
 
 function shareAnswer() { }
 
 export default class DiscussionScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
+      ...headerProperty,
       title: navigation.state.params.title,
       headerLeft: (
         <View style={{ marginLeft: 10 }}>

@@ -26,11 +26,13 @@ import { Models } from '../dataStorage/models';
 import { resetGlobalCache } from '../dataStorage/storage';
 import Colors from '../constants/Colors.js';
 import { EventRegister } from 'react-native-event-listeners';
+import { headerProperty } from '../navigation/AppNavigator';
 
 class HomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     let title = navigation.state.params && navigation.state.params.title ? navigation.state.params.title : 'BSF课程';
     return {
+      ...headerProperty,
       title: getI18nText(title),
       headerRight: (
         <View style={{ marginRight: 10, flexDirection: 'row' }}>

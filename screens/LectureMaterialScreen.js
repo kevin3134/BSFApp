@@ -8,10 +8,12 @@ import Colors from '../constants/Colors';
 import { EventRegister } from 'react-native-event-listeners';
 import AudioPlayer from '../components/AudioPlayer';
 import { ScrollView } from 'react-native-gesture-handler';
+import { headerProperty } from '../navigation/AppNavigator';
 
 export default class LectureMaterialScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
+      ...headerProperty,
       title: getI18nText('课程资料'),
       headerLeft: (
         <View style={{ marginLeft: 10 }}>

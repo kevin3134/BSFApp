@@ -10,10 +10,12 @@ import { Models } from '../dataStorage/models';
 import { getCurrentUser } from '../utils/user';
 import SegmentedControlTab from 'react-native-segmented-control-tab';
 import { EventRegister } from 'react-native-event-listeners';
+import { headerProperty } from '../navigation/AppNavigator';
 
 class AnswerManageScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
+      ...headerProperty,
       title: getI18nText('答案管理'),
       headerLeft: (
         <View style={{ marginLeft: 10 }}>

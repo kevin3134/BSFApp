@@ -19,10 +19,12 @@ import { getCurrentUser } from '../utils/user';
 import { downloadBibleAsync } from '../dataStorage/storage';
 import { CheckBox } from 'react-native-elements';
 import { EventRegister } from 'react-native-event-listeners';
+import { headerProperty } from '../navigation/AppNavigator';
 
 export default class BibleSelectScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
+      ...headerProperty,
       title: getI18nText('请选择圣经版本'),
       headerLeft: (
         <View style={{ marginLeft: 10 }}>

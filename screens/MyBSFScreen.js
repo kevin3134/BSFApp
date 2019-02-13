@@ -4,6 +4,7 @@ import { WebView, View, ActivityIndicator, Dimensions, TouchableOpacity, Image }
 import Colors from '../constants/Colors';
 import { EventRegister } from 'react-native-event-listeners';
 import { NavigationActions } from 'react-navigation';
+import { headerProperty } from '../navigation/AppNavigator';
 
 function goback() { }
 function refreshWebView() { }
@@ -12,18 +13,16 @@ export default class MyBSFScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const canGoBack = navigation.state.params && navigation.state.params.canGoBack;
     return {
+      ...headerProperty,
       title: getI18nText('MyBSF.org'),
-      headerLeft: (
+      headerLeft: canGoBack ? (
         <View style={{ marginLeft: 10, flexDirection: 'row' }}>
-          {
-            canGoBack &&
-            <TouchableOpacity onPress={() => { goback(); }}>
-              <Image
-                style={{ width: 34, height: 34 }}
-                source={require('../assets/images/GoBack.png')} />
-            </TouchableOpacity>
-          }
-        </View>),
+          <TouchableOpacity onPress={() => { goback(); }}>
+            <Image
+              style={{ width: 34, height: 34 }}
+              source={require('../assets/images/GoBack.png')} />
+          </TouchableOpacity>
+        </View>) : null,
       headerRight: (
         <View style={{ marginRight: 10, flexDirection: 'row' }}>
           <TouchableOpacity onPress={() => { refreshWebView(); }}>
