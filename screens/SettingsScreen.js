@@ -13,13 +13,14 @@ import { connectActionSheet } from '@expo/react-native-action-sheet';
 import { NavigationActions } from 'react-navigation';
 import { FontAwesome, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
-import { headerProperty } from '../navigation/AppNavigator';
+import { headerProperty } from '../constants/Styles';
 
 @connectActionSheet class SettingsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     let title = navigation.state.params && navigation.state.params.title ? navigation.state.params.title : getI18nText('我的设置');
     return {
       ...headerProperty,
+      tabBarLabel: getI18nText('我的设置'),
       title: getI18nText(title)
     };
   };
@@ -69,7 +70,7 @@ import { headerProperty } from '../navigation/AppNavigator';
       this.reload();
       this.setState({ language: getCurrentUser().getLanguageDisplayName() });
 
-      const setParamsAction = NavigationActions.setParams({
+      const setParamsAction = this.props.navigation.setParams({
         params: { title: 'BSF课程' },
         key: 'Home',
       })

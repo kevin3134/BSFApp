@@ -6,7 +6,7 @@ import { callWebServiceAsync, showWebServiceCallErrorsAsync } from '../dataStora
 import { getCurrentUser } from '../utils/user';
 import Colors from '../constants/Colors';
 import { EventRegister } from 'react-native-event-listeners';
-import { headerProperty } from '../navigation/AppNavigator';
+import { headerProperty } from '../constants/Styles';
 
 export default class AttendanceHomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {

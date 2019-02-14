@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, TextInput, KeyboardAvoidingView, Image, TouchableOpacity } from 'react-native';
 import { getI18nText } from '../utils/I18n';
 import { getCurrentUser } from '../utils/user';
-import { headerProperty } from '../navigation/AppNavigator';
+import { headerProperty } from '../constants/Styles';
 
 export default class SetPhoneScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {

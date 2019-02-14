@@ -20,7 +20,7 @@ import { clearPassage } from '../store/passage.js'
 import { getCurrentUser } from '../utils/user';
 import { FileSystem } from 'expo';
 import { getI18nText } from '../utils/I18n';
-import { headerProperty } from '../navigation/AppNavigator';
+import { headerProperty } from '../constants/Styles';
 
 @connectActionSheet class BibleScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {

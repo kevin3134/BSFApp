@@ -10,7 +10,7 @@ import { getCurrentUser } from '../utils/user';
 import { Models } from '../dataStorage/models';
 import AudioPlayer from '../components/AudioPlayer';
 import { EventRegister } from 'react-native-event-listeners';
-import { headerProperty } from '../navigation/AppNavigator';
+import { headerProperty } from '../constants/Styles';
 
 const audioBookId = require('../assets/json/audioBookId.json');
 

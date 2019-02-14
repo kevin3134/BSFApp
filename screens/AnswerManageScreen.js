@@ -10,7 +10,7 @@ import { Models } from '../dataStorage/models';
 import { getCurrentUser } from '../utils/user';
 import SegmentedControlTab from 'react-native-segmented-control-tab';
 import { EventRegister } from 'react-native-event-listeners';
-import { headerProperty } from '../navigation/AppNavigator';
+import { headerProperty } from '../constants/Styles';
 
 class AnswerManageScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {

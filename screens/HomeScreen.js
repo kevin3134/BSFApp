@@ -26,7 +26,7 @@ import { Models } from '../dataStorage/models';
 import { resetGlobalCache } from '../dataStorage/storage';
 import Colors from '../constants/Colors.js';
 import { EventRegister } from 'react-native-event-listeners';
-import { headerProperty } from '../navigation/AppNavigator';
+import { headerProperty } from '../constants/Styles';
 
 class HomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -34,6 +34,7 @@ class HomeScreen extends React.Component {
     return {
       ...headerProperty,
       title: getI18nText(title),
+      tabBarLabel: getI18nText('BSF课程'),
       headerRight: (
         <View style={{ marginRight: 10, flexDirection: 'row' }}>
           <TouchableOpacity onPress={() => { checkForContentUpdate(true); }}>

@@ -5,7 +5,7 @@ import { Models } from '../dataStorage/models';
 import { callWebServiceAsync, showWebServiceCallErrorsAsync } from '../dataStorage/storage';
 import { getCurrentUser } from '../utils/user';
 import { EventRegister } from 'react-native-event-listeners';
-import { headerProperty } from '../navigation/AppNavigator';
+import { headerProperty } from '../constants/Styles';
 
 export default class AttendanceGroupScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {

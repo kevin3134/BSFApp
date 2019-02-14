@@ -4,7 +4,7 @@ import { WebView, View, ActivityIndicator, Dimensions, TouchableOpacity, Image }
 import Colors from '../constants/Colors';
 import { EventRegister } from 'react-native-event-listeners';
 import { NavigationActions } from 'react-navigation';
-import { headerProperty } from '../navigation/AppNavigator';
+import { headerProperty } from '../constants/Styles';
 
 function goback() { }
 function refreshWebView() { }

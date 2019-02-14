@@ -20,7 +20,7 @@ import ExportAnswer from '../components/ExportAnswer.js';
 import Colors from '../constants/Colors'
 import { getI18nText, getI18nBibleBook } from '../utils/I18n';
 import { getCurrentUser } from '../utils/user';
-import { headerProperty } from '../navigation/AppNavigator.js';
+import { headerProperty } from '../constants/Styles';
 
 class LessonScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {

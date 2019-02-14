@@ -10,7 +10,7 @@ import { getCurrentUser } from '../utils/user';
 import Colors from '../constants/Colors';
 import DatePicker from 'react-native-datepicker';
 import { EventRegister } from 'react-native-event-listeners';
-import { headerProperty } from '../navigation/AppNavigator';
+import { headerProperty } from '../constants/Styles';
 
 export default class AttendanceScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {

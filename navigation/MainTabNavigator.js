@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image } from 'react-native';
+import { Image, Text } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 import Colors from '../constants/Colors';
 import HomeScreen from '../screens/HomeScreen';
@@ -49,13 +49,21 @@ const SettingsStack = createStackNavigator({
   AttendanceSelectLeader: AttendanceSelectLeaderScreen,
   LectureMaterial: LectureMaterialScreen,
   GlobalChat: GlobalChatScreen,
+  BibleSelect: BibleSelectScreen,
 });
 
-const tabBarLabels = {
-  HomeStack: getI18nText('BSF课程'),
-  MyBSFStack: getI18nText('MyBSF.org'),
-  AudioBibleStack: getI18nText('有声圣经'),
-  SettingsStack: getI18nText('我的设置'),
+function getTabBarLabel(route) {
+  switch (route) {
+    case 'HomeStack':
+      return getI18nText('BSF课程');
+    case 'MyBSFStack':
+      return getI18nText('MyBSF.org');
+    case 'AudioBibleStack':
+      return getI18nText('有声圣经');
+    case 'SettingsStack':
+      return getI18nText('我的设置');
+  }
+  return '';
 };
 
 export default createBottomTabNavigator({
@@ -65,33 +73,35 @@ export default createBottomTabNavigator({
   SettingsStack,
 },
   {
-    defaultNavigationOptions: ({ navigation }) => ({
-      tabBarVisible: navigation.state.index === 0,
-      tabBarLabel: tabBarLabels[navigation.state.routeName],
-      tabBarIcon: ({ focused, horizontal, tintColor }) => {
-        const { routeName } = navigation.state;
-        let image;
-        switch (routeName) {
-          case 'HomeStack':
-            image = focused ? require('../assets/images/Classes.On.png') : require('../assets/images/Classes.Off.png');
-            break;
-          case 'MyBSFStack':
-            image = focused ? require('../assets/images/mybsf.On.png') : require('../assets/images/mybsf.Off.png');
-            break;
-          case 'AudioBibleStack':
-            image = focused ? require('../assets/images/AudioBible.On.png') : require('../assets/images/AudioBible.Off.png');
-            break;
-          case 'SettingsStack':
-            image = focused ? require('../assets/images/MySettings.On.png') : require('../assets/images/MySettings.Off.png');
-            break;
-        }
-        return (
-          <Image
-            style={{ width: 30, height: 30 }}
-            source={image} />
-        );
-      },
-    }),
+    defaultNavigationOptions: ({ navigation }) => {
+      return {
+        tabBarVisible: navigation.state.index === 0,
+        tabBarLabel: navigation.state.params && navigation.state.params.tabLabel ? navigation.state.params.tabLabel : getTabBarLabel(navigation.state.routeName),
+        tabBarIcon: ({ focused, horizontal, tintColor }) => {
+          const { routeName } = navigation.state;
+          let image;
+          switch (routeName) {
+            case 'HomeStack':
+              image = focused ? require('../assets/images/Classes.On.png') : require('../assets/images/Classes.Off.png');
+              break;
+            case 'MyBSFStack':
+              image = focused ? require('../assets/images/mybsf.On.png') : require('../assets/images/mybsf.Off.png');
+              break;
+            case 'AudioBibleStack':
+              image = focused ? require('../assets/images/AudioBible.On.png') : require('../assets/images/AudioBible.Off.png');
+              break;
+            case 'SettingsStack':
+              image = focused ? require('../assets/images/MySettings.On.png') : require('../assets/images/MySettings.Off.png');
+              break;
+          }
+          return (
+            <Image
+              style={{ width: 30, height: 30 }}
+              source={image} />
+          );
+        },
+      }
+    },
     tabBarOptions: {
       activeTintColor: 'white',
       labelStyle: {
