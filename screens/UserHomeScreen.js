@@ -23,14 +23,25 @@ export default class UserHomeScreen extends React.Component {
     };
   };
 
-  state = {
-    mode: 'userLogin',
-    email: getCurrentUser().getEmail(),
-    oldPassword: '',
-    password: getCurrentUser().getPassword(),
-    password2: '',
-    busy: false,
-    windowWidth: Dimensions.get('window').width
+  constructor(props) {
+    super(props);
+
+    const userLoggedIn = this.getUserLoggedIn();
+    this.state = {
+      mode: userLoggedIn ? 'userProfile' : 'userLogin',
+      email: getCurrentUser().getEmail(),
+      password: '',
+      password2: '',
+      busy: false,
+      windowWidth: Dimensions.get('window').width
+    }
+  }
+
+  getUserLoggedIn() {
+    const email = getCurrentUser().getEmail();
+    const accessToken = getCurrentUser().getAccessToken();
+    console.log({ email, accessToken });
+    return email.length > 0 && accessToken.length > 0;
   }
 
   componentWillMount() {
@@ -50,9 +61,8 @@ export default class UserHomeScreen extends React.Component {
     this.setState({
       mode: mode,
       email: getCurrentUser().getEmail(),
-      oldPassword: getCurrentUser().getPassword(),
-      password: getCurrentUser().getPassword(),
-      password2: getCurrentUser().getPassword(),
+      password: '',
+      password2: '',
     });
   }
 
@@ -82,8 +92,13 @@ export default class UserHomeScreen extends React.Component {
           return;
         }
 
-        await getCurrentUser().setLoginInfoAsync(this.state.email, this.state.password);
-        this.gotoPage('userProfile');
+        if (result.status === 200 && result.body.accessToken) {
+          await getCurrentUser().setLoginInfoAsync(this.state.email, result.body.accessToken);
+          this.gotoPage('userProfile');
+          return;
+        }
+
+        Alert.alert(getI18nText('错误') + result.status, getI18nText('Unknown error, please try again later'));
       }
     }
     finally {
@@ -117,13 +132,13 @@ export default class UserHomeScreen extends React.Component {
       const result = await callWebServiceAsync(`${Models.HostHttpsServer}/api.php?c=createUser`, '', 'POST', [], body);
       const succeed = await showWebServiceCallErrorsAsync(result);
       if (succeed) {
-        if (result.status === 201) {
-          await getCurrentUser().setLoginInfoAsync(this.state.email, this.state.password);
+        if (result.status === 201 && result.body.accessToken) {
+          await getCurrentUser().setLoginInfoAsync(this.state.email, result.body.accessToken);
           this.gotoPage('userProfile');
         } else if (result.status === 409) {
           Alert.alert(getI18nText('错误'), 'Email is already registered!');
         } else {
-          Alert.alert(getI18nText('错误') + result.status, getI18nText('Server error, please try again later'));
+          Alert.alert(getI18nText('错误') + result.status, getI18nText('Unknown error, please try again later'));
         }
       }
     }
@@ -159,11 +174,6 @@ export default class UserHomeScreen extends React.Component {
   }
 
   async updatePassword() {
-    if (!this.state.oldPassword || this.state.oldPassword.length < 6) {
-      this.oldPasswordInput.shake();
-      this.oldPasswordInput.focus();
-      return;
-    }
     if (!this.state.password || this.state.password.length < 6) {
       this.passwordInput.shake();
       this.passwordInput.focus();
@@ -179,14 +189,14 @@ export default class UserHomeScreen extends React.Component {
       this.setState({ busy: true });
       const body = {
         email: this.state.email,
-        pass: this.state.oldPassword,
-        newPass: this.state.password,
+        accessToken: getCurrentUser().getAccessToken(),
+        pass: this.state.password,
       };
       const result = await callWebServiceAsync(`${Models.HostHttpsServer}/api.php?c=changePassword`, '', 'POST', [], body);
       const succeed = await showWebServiceCallErrorsAsync(result);
       if (succeed) {
-        if (result.status === 201) {
-          await getCurrentUser().setLoginInfoAsync(this.state.email, this.state.password);
+        if (result.status === 201 && result.body.accessToken) {
+          await getCurrentUser().setLoginInfoAsync(this.state.email, result.body.accessToken);
           this.gotoPage('userProfile');
         } else {
           Alert.alert(getI18nText('错误') + result.status, getI18nText('Please double check your input!'));
@@ -198,27 +208,32 @@ export default class UserHomeScreen extends React.Component {
     }
   }
 
+  async logout() {
+    await getCurrentUser().setLoginInfoAsync('', '');
+    this.gotoPage('userLogin');
+  }
+
   render() {
+    const userLoggedIn = this.getUserLoggedIn();
     return (
       <KeyboardAvoidingView style={styles.container} behavior='padding' keyboardVerticalOffset={0}>
         <ScrollView style={{ flex: 1, backgroundColor: 'white', width: this.state.windowWidth }}>
+          <Text style={{ fontSize: 20, color: 'red' }}> Under development, please skip for now.</Text>
           {
             this.state.mode === 'userProfile' &&
+            <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', width: this.state.windowWidth }}>
+              <Text style={{ fontSize: 20 }}>{getI18nText('用户资料')}</Text>
+            </View>
+          }
+
+          {
+            this.state.mode === 'updatePassword' &&
             <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', width: this.state.windowWidth }}>
               <Text style={{ fontSize: 20 }}>{getI18nText('修改密码')}</Text>
               <Input
                 containerStyle={{ marginTop: 20 }}
-                ref={(input) => this.oldPasswordInput = input}
-                label={getI18nText('旧密码')}
-                defaultValue={this.state.oldPassword}
-                secureTextEntry={true}
-                errorStyle={{ color: 'red' }}
-                onChangeText={(text) => { this.setState({ oldPassword: text }); }}
-              />
-              <Input
-                containerStyle={{ marginTop: 20 }}
                 ref={(input) => this.passwordInput = input}
-                label={getI18nText('新密码')}
+                label={getI18nText('新密码(至少6位)')}
                 defaultValue={this.state.password}
                 secureTextEntry={true}
                 errorStyle={{ color: 'red' }}
@@ -229,7 +244,7 @@ export default class UserHomeScreen extends React.Component {
                 ref={(input) => this.password2Input = input}
                 defaultValue={this.state.password2}
                 secureTextEntry={true}
-                label={getI18nText('重复新密码')}
+                label={getI18nText('重复新密码(至少6位)')}
                 errorStyle={{ color: 'red' }}
                 onChangeText={(text) => { this.setState({ password2: text }); }}
               />
@@ -258,7 +273,7 @@ export default class UserHomeScreen extends React.Component {
               <Input
                 containerStyle={{ marginTop: 20 }}
                 ref={(input) => this.passwordInput = input}
-                label={getI18nText('密码')}
+                label={getI18nText('密码(至少6位)')}
                 defaultValue={this.state.password}
                 secureTextEntry={true}
                 errorStyle={{ color: 'red' }}
@@ -340,38 +355,58 @@ export default class UserHomeScreen extends React.Component {
           <View style={{ flex: 1, marginTop: 10, backgroundColor: 'white', alignItems: 'center', width: this.state.windowWidth }}>
             <View style={{ flexDirection: 'row' }}>
               {
-                this.state.mode !== 'userProfile' && this.state.mode !== 'userLogin' &&
+                !userLoggedIn && this.state.mode !== 'userLogin' &&
                 <TouchableOpacity onPress={() => { this.gotoPage('userLogin') }}>
                   <Text style={{ fontSize: 18, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('登录已有账号')}</Text>
                 </TouchableOpacity>
               }
 
               {
-                this.state.mode !== 'userProfile' && this.state.mode !== 'createUser' && <View style={{ width: 7 }} />
+                !userLoggedIn && this.state.mode !== 'createUser' && <View style={{ width: 7 }} />
               }
               {
-                this.state.mode !== 'userProfile' && this.state.mode !== 'createUser' &&
+                !userLoggedIn && this.state.mode !== 'createUser' &&
                 <TouchableOpacity onPress={() => { this.gotoPage('createUser') }}>
                   <Text style={{ fontSize: 18, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('创建新用户')}</Text>
                 </TouchableOpacity>
               }
 
               {
-                this.state.mode !== 'userProfile' && this.state.mode !== 'forgetPassword' && <View style={{ width: 7 }} />
+                !userLoggedIn && this.state.mode !== 'forgetPassword' && <View style={{ width: 7 }} />
               }
               {
-                this.state.mode !== 'userProfile' && this.state.mode !== 'forgetPassword' &&
+                !userLoggedIn && this.state.mode !== 'forgetPassword' &&
                 <TouchableOpacity onPress={() => { this.gotoPage('forgetPassword') }}>
                   <Text style={{ fontSize: 18, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('找回密码')}</Text>
                 </TouchableOpacity>
               }
 
               {
-                this.state.mode === 'userProfile' && <View style={{ width: 7 }} />
+                userLoggedIn && <View style={{ width: 7 }} />
               }
               {
-                this.state.mode === 'userProfile' &&
-                <TouchableOpacity onPress={() => { this.gotoPage('userLogin') }}>
+                userLoggedIn && this.state.mode !== 'userProfile' &&
+                <TouchableOpacity onPress={() => { this.gotoPage('userProfile') }}>
+                  <Text style={{ fontSize: 18, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('修改用户资料')}</Text>
+                </TouchableOpacity>
+              }
+
+              {
+                userLoggedIn && <View style={{ width: 7 }} />
+              }
+              {
+                userLoggedIn && this.state.mode !== 'updatePassword' &&
+                <TouchableOpacity onPress={() => { this.gotoPage('updatePassword') }}>
+                  <Text style={{ fontSize: 18, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('修改密码')}</Text>
+                </TouchableOpacity>
+              }
+
+              {
+                userLoggedIn && <View style={{ width: 7 }} />
+              }
+              {
+                userLoggedIn &&
+                <TouchableOpacity onPress={() => { this.logout() }}>
                   <Text style={{ fontSize: 18, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('登出')}</Text>
                 </TouchableOpacity>
               }

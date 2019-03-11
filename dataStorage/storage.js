@@ -294,6 +294,7 @@ async function callWebServiceAsync(url, api, method, headersUnused, body) {
         response = await fetch(serverUrl, payload);
     } catch (err) {
         console.log('fetch error:' + JSON.stringify({ url: serverUrl, method, body, err }));
+        return { headers: responseHeader, body: {}, status: responseStatus };
     }
 
     responseStatus = response.status;

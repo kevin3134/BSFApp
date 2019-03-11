@@ -33,6 +33,17 @@ class HomeScreen extends React.Component {
     const testVersion = (Constants.manifest && Constants.manifest.id && Constants.manifest.id !== '@turbozv/CBSFApp');
     return {
       title: getI18nText(title),
+      headerLeft: (
+        testVersion ?
+          <View style={{ marginLeft: 10 }} >
+            <TouchableOpacity onPress={() => { userHome() }}>
+              <Image
+                style={{ width: 34, height: 34 }}
+                source={require('../assets/images/MySettings.On.png')} />
+            </TouchableOpacity>
+          </View>
+          : null
+      ),
       headerRight: (
         <View style={{ marginRight: 10, flexDirection: 'row' }}>
           <TouchableOpacity onPress={() => { checkForContentUpdate() }}>
@@ -40,17 +51,11 @@ class HomeScreen extends React.Component {
               style={{ width: 34, height: 34 }}
               source={require('../assets/images/Download.png')} />
           </TouchableOpacity>
-          <View style={{ width: 7 }} />
-          <TouchableOpacity onPress={() => { userHome() }}>
-            <Image
-              style={{ width: 34, height: 34 }}
-              source={require('../assets/images/MySettings.On.png')} />
-          </TouchableOpacity>
           {
             testVersion &&
             <View style={{
               position: 'absolute',
-              right: 85,
+              right: 50,
               top: 5,
               backgroundColor: '#e74c3c',
               borderRadius: 11,

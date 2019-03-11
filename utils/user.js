@@ -60,7 +60,7 @@ export default class User {
   validBibles = null;
   readDiscussions = {};
   email = '';
-  password = '';
+  accessToken = '';
 
   isBibleVersionValid(version) {
     if (!this.validBibles) {
@@ -111,8 +111,8 @@ export default class User {
       if (existingUser.email) {
         this.email = existingUser.email;
       }
-      if (existingUser.password) {
-        this.password = existingUser.password;
+      if (existingUser.accessToken) {
+        this.accessToken = existingUser.accessToken;
       }
       this.loggedOn = true;
 
@@ -373,7 +373,7 @@ export default class User {
       bibleVersion2: this.bibleVersion2,
       readDiscussions: this.readDiscussions,
       email: this.email,
-      password: this.password
+      accessToken: this.accessToken
     };
   }
 
@@ -509,13 +509,13 @@ export default class User {
     return this.email;
   }
 
-  getPassword() {
-    return this.password;
+  getAccessToken() {
+    return this.accessToken;
   }
 
-  async setLoginInfoAsync(email, password) {
+  async setLoginInfoAsync(email, accessToken) {
     this.email = email;
-    this.password = password;
+    this.accessToken = accessToken;
     await saveUserAsync(this.getUserInfo());
     this.logUserInfo();
   }
