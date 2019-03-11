@@ -40,11 +40,17 @@ class HomeScreen extends React.Component {
               style={{ width: 34, height: 34 }}
               source={require('../assets/images/Download.png')} />
           </TouchableOpacity>
+          <View style={{ width: 7 }} />
+          <TouchableOpacity onPress={() => { userHome() }}>
+            <Image
+              style={{ width: 34, height: 34 }}
+              source={require('../assets/images/MySettings.On.png')} />
+          </TouchableOpacity>
           {
             testVersion &&
             <View style={{
               position: 'absolute',
-              right: 50,
+              right: 85,
               top: 5,
               backgroundColor: '#e74c3c',
               borderRadius: 11,
@@ -85,6 +91,7 @@ class HomeScreen extends React.Component {
     });
 
     checkForContentUpdate = () => this.checkForContentUpdate(true);
+    userHome = () => this.props.navigation.navigate('UserProfile');
   }
 
   componentWillUnmount() {

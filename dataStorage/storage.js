@@ -282,34 +282,40 @@ async function callWebServiceAsync(url, api, method, headersUnused, body) {
     let responseJson = '';
     let serverUrl = url + api;
     const headers = getHttpHeaders();
+    let payload;
+    if (body) {
+        payload = { method, headers, body: JSON.stringify(body) };
+    } else {
+        payload = { method, headers };
+    }
+
+    let response;
     try {
-        let payload;
-        if (body) {
-            payload = { method, headers, body: JSON.stringify(body) };
-        } else {
-            payload = { method, headers };
-        }
+        response = await fetch(serverUrl, payload);
+    } catch (err) {
+        console.log('fetch error:' + JSON.stringify({ url: serverUrl, method, body, err }));
+    }
 
-        const response = await fetch(serverUrl, payload);
+    responseStatus = response.status;
+    responseHeader = response.headers.map;
 
-        responseStatus = response.status;
-        responseHeader = response.headers.map;
-
-        try {
-            let responseString = await response.text();
-            responseJson = JSON.parse(responseString);
-        } catch (err) {
-            if (response._bodyText) {
+    try {
+        const responseString = await response.text();
+        console.log(responseString);
+        responseJson = JSON.parse(responseString);
+    } catch (err) {
+        if (response._bodyText) {
+            try {
                 responseJson = eval("(" + response._bodyText + ")")
+            } catch (err) {
+                console.log('Payload error:' + response._bodyText);
+                responseJson = response._bodyText;
             }
         }
+    }
 
-        if (!responseJson) {
-            responseJson = '';
-        }
-
-    } catch (err) {
-        console.log('callWebServiceAsync Error:' + JSON.stringify({ url: serverUrl, method, body, err }));
+    if (!responseJson) {
+        responseJson = '';
     }
 
     const result = { headers: responseHeader, body: responseJson, status: responseStatus };

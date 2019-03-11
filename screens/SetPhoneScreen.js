@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Alert, TextInput, KeyboardAvoidingView, Keyboard, Image, TouchableOpacity } from 'react-native';
+import { callWebServiceAsync, showWebServiceCallErrorsAsync } from '../dataStorage/storage';
 import { getI18nText } from '../utils/I18n';
 import { getCurrentUser } from '../utils/user';
 

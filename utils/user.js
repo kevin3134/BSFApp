@@ -59,6 +59,8 @@ export default class User {
   permissions = {};
   validBibles = null;
   readDiscussions = {};
+  email = '';
+  password = '';
 
   isBibleVersionValid(version) {
     if (!this.validBibles) {
@@ -105,6 +107,12 @@ export default class User {
       }
       if (existingUser.readDiscussions) {
         this.readDiscussions = existingUser.readDiscussions;
+      }
+      if (existingUser.email) {
+        this.email = existingUser.email;
+      }
+      if (existingUser.password) {
+        this.password = existingUser.password;
       }
       this.loggedOn = true;
 
@@ -363,7 +371,9 @@ export default class User {
       audioBook: this.audioBook,
       fontSize: this.fontSize,
       bibleVersion2: this.bibleVersion2,
-      readDiscussions: this.readDiscussions
+      readDiscussions: this.readDiscussions,
+      email: this.email,
+      password: this.password
     };
   }
 
@@ -493,6 +503,21 @@ export default class User {
 
     console.log('getDiscussionHasUnreadByDay: ' + JSON.stringify({ result }));
     return result;
+  }
+
+  getEmail() {
+    return this.email;
+  }
+
+  getPassword() {
+    return this.password;
+  }
+
+  async setLoginInfoAsync(email, password) {
+    this.email = email;
+    this.password = password;
+    await saveUserAsync(this.getUserInfo());
+    this.logUserInfo();
   }
 }
 
