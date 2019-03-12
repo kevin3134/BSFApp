@@ -27,10 +27,22 @@ import { resetGlobalCache } from '../dataStorage/storage';
 import Colors from '../constants/Colors';
 import { EventRegister } from 'react-native-event-listeners';
 
+async function checkForAppUpdate() {
+  const { isAvailable } = await Updates.checkForUpdateAsync();
+  if (isAvailable) {
+    Updates.reload();
+  } else {
+    Alert.alert('没有发现更新！');
+  }
+}
+
 class HomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const title = navigation.state.params && navigation.state.params.title ? navigation.state.params.title : 'BSF课程';
     const testVersion = (Constants.manifest && Constants.manifest.id && Constants.manifest.id !== '@turbozv/CBSFApp');
+    const { manifest } = Constants;
+    const version = manifest.publishedTime ? `${manifest.publishedTime.split('T')[0].replace(/-/g, '.')}` :
+      `${manifest.version}`;
     return {
       title: getI18nText(title),
       headerLeft: (
@@ -45,23 +57,14 @@ class HomeScreen extends React.Component {
           : null
       ),
       headerRight: (
-        <View style={{ marginRight: 10, flexDirection: 'row' }}>
-          <TouchableOpacity onPress={() => { checkForContentUpdate() }}>
-            <Image
-              style={{ width: 34, height: 34 }}
-              source={require('../assets/images/Download.png')} />
-          </TouchableOpacity>
+        <View style={{ flexDirection: 'row' }}>
           {
             testVersion &&
-            <View style={{ marginLeft: 10 }} >
+            <View>
               <TouchableOpacity onPress={() => {
-                Alert.alert('Info', 'Would you like to reload the app?', [
-                  { text: 'Reload', onPress: () => Updates.reload() },
-                  { text: 'Cancel', onPress: () => { } }
-                ]);
+                checkForAppUpdate();
               }}>
                 <View style={{
-                  top: 5,
                   backgroundColor: '#e74c3c',
                   borderRadius: 11,
                   paddingHorizontal: 5
@@ -70,12 +73,18 @@ class HomeScreen extends React.Component {
                     padding: 3,
                     color: '#ecf0f1',
                     fontWeight: 'bold',
-                    fontSize: 14
-                  }}>Preview</Text>
+                    fontSize: 10
+                  }}>{version}</Text>
                 </View>
               </TouchableOpacity>
             </View>
           }
+          <TouchableOpacity onPress={() => { checkForContentUpdate() }}>
+            <Image
+              style={{ width: 34, height: 34 }}
+              source={require('../assets/images/Download.png')} />
+          </TouchableOpacity>
+          <View style={{ width: 10 }} />
         </View >)
     };
   };

@@ -37,7 +37,7 @@ export default class AboutScreen extends React.Component {
   }
 
   render() {
-    const { manifest, platform } = Constants;
+    const { manifest } = Constants;
     const version = manifest.publishedTime ? `${manifest.publishedTime.split('T')[0].replace(/-/g, '.')} (SDK${manifest.sdkVersion})` :
       `${manifest.version} SDK${manifest.sdkVersion}`;
     return (
