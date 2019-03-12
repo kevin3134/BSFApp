@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { FontAwesome } from '@expo/vector-icons';
-import { Constants, FileSystem } from 'expo';
+import { Constants, FileSystem, Updates } from 'expo';
 import {
   ScrollView,
   StyleSheet,
@@ -53,23 +53,30 @@ class HomeScreen extends React.Component {
           </TouchableOpacity>
           {
             testVersion &&
-            <View style={{
-              position: 'absolute',
-              right: 50,
-              top: 5,
-              backgroundColor: '#e74c3c',
-              borderRadius: 11,
-              paddingHorizontal: 5
-            }}>
-              <Text style={{
-                padding: 3,
-                color: '#ecf0f1',
-                fontWeight: 'bold',
-                fontSize: 14
-              }}>Preview</Text>
+            <View style={{ marginLeft: 10 }} >
+              <TouchableOpacity onPress={() => {
+                Alert.alert('Info', 'Would you like to reload the app?', [
+                  { text: 'Reload', onPress: () => Updates.reload() },
+                  { text: 'Cancel', onPress: () => { } }
+                ]);
+              }}>
+                <View style={{
+                  top: 5,
+                  backgroundColor: '#e74c3c',
+                  borderRadius: 11,
+                  paddingHorizontal: 5
+                }}>
+                  <Text style={{
+                    padding: 3,
+                    color: '#ecf0f1',
+                    fontWeight: 'bold',
+                    fontSize: 14
+                  }}>Preview</Text>
+                </View>
+              </TouchableOpacity>
             </View>
           }
-        </View>)
+        </View >)
     };
   };
 

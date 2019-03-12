@@ -12,13 +12,13 @@ export const UPDATE_ANSWER = 'UPDATE_ANSWER'
 
 export const ANSWER_KEY = 'answer'
 
-function saveAnswer (newState) {
+function saveAnswer(newState) {
   console.log("Saving answers...");
   saveAsync(newState, Models.Answer);
 }
 const debouncedSaveAnswer = debounce(saveAnswer, wait = 500)
 
-export function updateAnswer (questionId, answerText) {
+export function updateAnswer(questionId, answerText) {
   return (dispatch) => {
     dispatch({
       type: UPDATE_ANSWER,
@@ -47,7 +47,7 @@ const ACTION_HANDLERS = {
   },
 }
 
-export default function booksReducer (state = initialState, action) {
+export default function booksReducer(state = initialState, action) {
   const handler = ACTION_HANDLERS[action.type]
   return handler ? handler(state, action) : state
 }
