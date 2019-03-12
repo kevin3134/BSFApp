@@ -254,11 +254,11 @@ class UserHomeScreen extends React.Component {
         const remote = downloadAnswers[i];
         const local = localAnswers[i];
         let merged;
-        if (!local) {
+        if (local === undefined || local === null) {
           merged = remote;
           useRemote++;
           this.props.updateAnswer(i, merged);
-          console.log(`${i}: ${local} | ${remote} => ${merged} - No local, use remote`);
+          // console.log(`${i}: ${local} | ${remote} => ${merged} - No local, use remote`);
         } else if (local === remote) {
           merged = local;
           // console.log(`${i}: ${local} | ${remote} => ${merged} - Same, use local`);
@@ -380,6 +380,7 @@ class UserHomeScreen extends React.Component {
     return (
       <KeyboardAvoidingView style={styles.container} behavior='padding' keyboardVerticalOffset={0} >
         <ScrollView style={{ flex: 1, backgroundColor: 'white', width: this.state.windowWidth }}>
+          <View style={{ height: 10 }} />
           {/* <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', width: this.state.windowWidth }}>
             <Text style={{ fontSize: 23, color: 'red' }}>---Under development---</Text>
           </View> */}
@@ -500,7 +501,7 @@ class UserHomeScreen extends React.Component {
               <Input
                 containerStyle={{ marginTop: 20 }}
                 ref={(input) => this.passwordInput = input}
-                label={getI18nText('密码')}
+                label={getI18nText('密码(至少6位)')}
                 defaultValue={this.state.password}
                 secureTextEntry={true}
                 errorStyle={{ color: 'red' }}
@@ -511,7 +512,7 @@ class UserHomeScreen extends React.Component {
                 ref={(input) => this.password2Input = input}
                 defaultValue={this.state.password2}
                 secureTextEntry={true}
-                label={getI18nText('重复密码')}
+                label={getI18nText('重复密码(至少6位)')}
                 errorStyle={{ color: 'red' }}
                 onChangeText={(text) => { this.setState({ password2: text }); }}
               />
