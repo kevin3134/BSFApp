@@ -10,6 +10,7 @@ import { Models } from '../dataStorage/models';
 import { getCurrentUser } from '../utils/user';
 import SegmentedControlTab from 'react-native-segmented-control-tab';
 import { EventRegister } from 'react-native-event-listeners';
+import { showMessage } from "react-native-flash-message";
 
 class AnswerManageScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -61,7 +62,7 @@ class AnswerManageScreen extends React.Component {
 
   export() {
     const shareData = { title: getI18nText('导出'), subject: getI18nText('导出'), message: this.state.answers };
-    console.log(shareData);
+    // console.log(shareData);
     Share.share(shareData);
   }
 
@@ -69,13 +70,18 @@ class AnswerManageScreen extends React.Component {
     try {
       const content = JSON.parse(this.importAnswerText);
       if (content.length == 0) {
-        Alert.alert(getI18nText('错误'), getI18nText('没有答案'));
+        showMessage({
+          message: getI18nText('错误'),
+          duration: 3000,
+          description: getI18nText('没有答案'),
+          type: "danger",
+        });
         return;
       }
 
       for (let i in content) {
         const item = content[i];
-        console.log(item.id + ':' + item.value);
+        // console.log(item.id + ':' + item.value);
       }
 
       Alert.alert(getI18nText('确认'), getI18nText('如果本机已有对应的答案，内容将会被覆盖，请确认是否导入答案？'), [
@@ -86,16 +92,24 @@ class AnswerManageScreen extends React.Component {
               this.props.updateAnswer(item.id, item.value);
             }
 
-            Alert.alert(getI18nText('导入成功'));
+            showMessage({
+              message: getI18nText('导入成功'),
+              duration: 3000,
+              type: "success"
+            });
+            this.props.navigation.pop();
           }
         },
         { text: 'Cancel', onPress: () => { } },
       ]);
 
     } catch (err) {
-      Alert.alert(getI18nText('错误'), getI18nText('答案格式不正确'), [
-        { text: 'OK', onPress: () => { } }
-      ]);
+      showMessage({
+        message: getI18nText('错误'),
+        duration: 3000,
+        description: getI18nText('答案格式不正确'),
+        type: "danger",
+      });
     }
   }
 

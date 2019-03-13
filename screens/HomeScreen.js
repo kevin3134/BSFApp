@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { FontAwesome, EvilIcons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { Constants, FileSystem, Updates } from 'expo';
+import { FontAwesome } from '@expo/vector-icons';
+import { FileSystem, Updates } from 'expo';
 import {
   ScrollView,
   StyleSheet,
@@ -27,13 +27,18 @@ import { resetGlobalCache } from '../dataStorage/storage';
 import Colors from '../constants/Colors';
 import { EventRegister } from 'react-native-event-listeners';
 import { isPreview, appVersion } from '../dataStorage/storage';
+import { showMessage } from "react-native-flash-message";
 
 async function checkForAppUpdate() {
   const { isAvailable } = await Updates.checkForUpdateAsync();
   if (isAvailable) {
     Updates.reload();
   } else {
-    Alert.alert('没有发现更新！');
+    showMessage({
+      message: getI18nText('没有发现更新！'),
+      duration: 3000,
+      type: "info"
+    });
   }
 }
 

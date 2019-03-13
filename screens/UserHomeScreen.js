@@ -10,6 +10,7 @@ import { Button, Input, Overlay } from 'react-native-elements';
 import Colors from '../constants/Colors';
 import { loadAsync } from '../dataStorage/storage';
 import { updateAnswer } from '../store/answers';
+import { showMessage } from "react-native-flash-message";
 
 class UserHomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -112,12 +113,22 @@ class UserHomeScreen extends React.Component {
   handleError(result) {
     if (result && result.status === 401) {
       // Wrong access token
-      Alert.alert(getI18nText('错误') + result.status, getI18nText('登录过期，请重新登录'));
+      showMessage({
+        message: getI18nText('错误') + result.status,
+        duration: 10000,
+        description: getI18nText('登录过期，请重新登录'),
+        type: "danger",
+      });
       this.logout();
       return;
     }
 
-    Alert.alert(getI18nText('错误') + result.status, getI18nText('未知错误，请稍后再试'));
+    showMessage({
+      message: getI18nText('错误') + result.status,
+      duration: 10000,
+      description: getI18nText('未知错误，请稍后再试'),
+      type: "danger",
+    });
   }
 
   async loginUser() {
@@ -220,9 +231,13 @@ class UserHomeScreen extends React.Component {
       const succeed = await showWebServiceCallErrorsAsync(result);
       if (succeed) {
         if (result.status === 201) {
-          Alert.alert(getI18nText('成功'), getI18nText('临时密码已经通过电子邮件发送给您，请在1小时内用临时密码登录并修改密码!'), [
-            { text: 'OK', onPress: () => { this.gotoPage('userLogin'); } }
-          ]);
+          showMessage({
+            message: getI18nText('成功'),
+            duration: 10000,
+            description: getI18nText('临时密码已经通过电子邮件发送给您，请在1小时内用临时密码登录并修改密码!'),
+            type: "success"
+          });
+          this.gotoPage('userLogin');
           return;
         }
 
@@ -346,10 +361,14 @@ class UserHomeScreen extends React.Component {
       succeed = await showWebServiceCallErrorsAsync(result);
       if (succeed) {
         if (result.status === 201) {
-          Alert.alert(getI18nText('合并成功'),
-            getI18nText('使用远程答案: ') + useRemote + '\n' +
-            getI18nText('使用本地答案: ') + useLocal + '\n' +
-            getI18nText('使用合并答案: ') + useMerged);
+          showMessage({
+            message: getI18nText('合并成功'),
+            duration: 10000,
+            description: getI18nText('使用远程答案: ') + useRemote + '\n' +
+              getI18nText('使用本地答案: ') + useLocal + '\n' +
+              getI18nText('使用合并答案: ') + useMerged,
+            type: "success"
+          });
           this.getAnswerCount();
           return;
         }
@@ -386,7 +405,11 @@ class UserHomeScreen extends React.Component {
       succeed = await showWebServiceCallErrorsAsync(result);
       if (succeed) {
         if (result.status === 201) {
-          Alert.alert(getI18nText('上传成功'));
+          showMessage({
+            message: getI18nText('上传成功'),
+            duration: 3000,
+            type: "success"
+          });
           this.getAnswerCount();
           return;
         }
@@ -410,7 +433,12 @@ class UserHomeScreen extends React.Component {
       let result = await callWebServiceAsync(`${Models.HostHttpsServer}/api.php?c=downloadAnswers`, '', 'POST', [], body);
       let succeed = await showWebServiceCallErrorsAsync(result);
       if (!succeed || !result.status || result.status !== 200) {
-        Alert.alert(getI18nText('错误') + result.status, getI18nText('未知错误，请稍后再试'));
+        showMessage({
+          message: getI18nText('错误') + result.status,
+          duration: 10000,
+          description: getI18nText('未知错误，请稍后再试'),
+          type: "danger",
+        });
         return;
       }
 
@@ -419,7 +447,11 @@ class UserHomeScreen extends React.Component {
         this.props.updateAnswer(i, downloadAnswers[i]);
       }
 
-      Alert.alert(getI18nText('下载成功'));
+      showMessage({
+        message: getI18nText('下载成功'),
+        duration: 3000,
+        type: "success",
+      });
       this.getAnswerCount();
     }
     finally {
@@ -491,8 +523,8 @@ class UserHomeScreen extends React.Component {
                     buttonStyle={{ backgroundColor: Colors.yellow, margin: 10, borderRadius: 30, paddingLeft: 10, paddingRight: 20 }}
                     onPress={() => {
                       Alert.alert(getI18nText('确认'), getI18nText('请确认是否上传并覆盖远程的答案？'), [
-                        { text: 'Yes', onPress: () => { this.uploadAnswers() } },
-                        { text: 'Cancel', onPress: () => { } },
+                        { text: getI18nText('确认'), onPress: () => { this.uploadAnswers() } },
+                        { text: getI18nText('取消'), onPress: () => { } },
                       ]);
                     }}
                   />
@@ -514,8 +546,8 @@ class UserHomeScreen extends React.Component {
                     buttonStyle={{ backgroundColor: Colors.yellow, margin: 10, borderRadius: 30, paddingLeft: 10, paddingRight: 20 }}
                     onPress={() => {
                       Alert.alert(getI18nText('确认'), getI18nText('请确认是否下载并覆盖本地的答案（所有本地修改的答案将会丢失）？'), [
-                        { text: 'Yes', onPress: () => { this.downloadAnswers() } },
-                        { text: 'Cancel', onPress: () => { } },
+                        { text: getI18nText('确认'), onPress: () => { this.downloadAnswers() } },
+                        { text: getI18nText('取消'), onPress: () => { } },
                       ]);
                     }}
                   />

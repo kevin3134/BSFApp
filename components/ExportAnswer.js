@@ -39,7 +39,7 @@ export default class ExportAnswer extends React.Component {
     console.log("Save " + this.props.lessonId);
     try {
       const answerContent = await loadAsync(Models.Answer, null, false);
-      console.log(JSON.stringify(answerContent));
+      // console.log(JSON.stringify(answerContent));
       let answers = '';
       if (answerContent && answerContent.answers) {
         answers = answerContent.answers;
@@ -60,7 +60,7 @@ export default class ExportAnswer extends React.Component {
       content += this.getContent(lessonContent.dayQuestions.six, answers);
 
       const shareData = { title: lessonContent.name, subject: lessonContent.name, message: content };
-      console.log(shareData);
+      // console.log(shareData);
 
       Share.share(shareData);
     } catch (error) {
@@ -74,7 +74,7 @@ export default class ExportAnswer extends React.Component {
     console.log("Print " + this.props.lessonId);
     try {
       const answerContent = await loadAsync(Models.Answer, null, false);
-      console.log(JSON.stringify(answerContent));
+      // console.log(JSON.stringify(answerContent));
       let answers = '';
       if (answerContent && answerContent.answers) {
         answers = answerContent.answers;
@@ -98,7 +98,7 @@ export default class ExportAnswer extends React.Component {
       content += '</p>';
 
       const html = `<style> p { font-size: 11px; } </style> ${content}`;
-      console.log(html);
+      // console.log(html);
 
       // Android has a bug that cannot parse width/height
       if (Platform.OS === 'ios') {
