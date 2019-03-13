@@ -43,9 +43,8 @@ class UserHomeScreen extends React.Component {
   }
 
   getUserLoggedIn() {
-    const email = getCurrentUser().getEmail();
     const accessToken = getCurrentUser().getAccessToken();
-    return email.length > 0 && accessToken.length > 0;
+    return accessToken && accessToken.length > 0;
   }
 
   componentWillMount() {
@@ -110,11 +109,11 @@ class UserHomeScreen extends React.Component {
     }
   }
 
-  async handleError(result) {
+  handleError(result) {
     if (result && result.status === 401) {
       // Wrong access token
-      this.gotoPage('userLogin');
-      Alert.alert(getI18nText('错误') + result.status, getI18nText('请重新登录'));
+      Alert.alert(getI18nText('错误') + result.status, getI18nText('登录过期，请重新登录'));
+      this.logout();
       return;
     }
 
@@ -272,7 +271,7 @@ class UserHomeScreen extends React.Component {
   }
 
   async logout() {
-    await getCurrentUser().setLoginInfoAsync('', '');
+    await getCurrentUser().setLoginInfoAsync(getCurrentUser().getEmail(), '');
     this.gotoPage('userLogin');
   }
 
@@ -351,6 +350,7 @@ class UserHomeScreen extends React.Component {
             getI18nText('使用远程答案: ') + useRemote + '\n' +
             getI18nText('使用本地答案: ') + useLocal + '\n' +
             getI18nText('使用合并答案: ') + useMerged);
+          this.getAnswerCount();
           return;
         }
 
@@ -386,10 +386,12 @@ class UserHomeScreen extends React.Component {
       succeed = await showWebServiceCallErrorsAsync(result);
       if (succeed) {
         if (result.status === 201) {
-          Alert.alert(getI18nText('上传成功'), '答案数目: ' + Object.keys(localAnswers).length);
-        } else {
-          this.handleError(result);
+          Alert.alert(getI18nText('上传成功'));
+          this.getAnswerCount();
+          return;
         }
+
+        this.handleError(result);
       }
     }
     finally {
@@ -417,7 +419,8 @@ class UserHomeScreen extends React.Component {
         this.props.updateAnswer(i, downloadAnswers[i]);
       }
 
-      Alert.alert(getI18nText('下载成功'), getI18nText('答案数目: ') + Object.keys(downloadAnswers).length);
+      Alert.alert(getI18nText('下载成功'));
+      this.getAnswerCount();
     }
     finally {
       this.setState({ busy: false });
@@ -425,7 +428,7 @@ class UserHomeScreen extends React.Component {
   }
 
   render() {
-    const userLoggedIn = this.getUserLoggedIn();
+    const userLoggedIn = !!this.getUserLoggedIn();
     return (
       <KeyboardAvoidingView style={styles.container} behavior='padding' keyboardVerticalOffset={0} >
         <ScrollView style={{ flex: 1, backgroundColor: 'white', width: this.state.windowWidth }}>
@@ -433,8 +436,7 @@ class UserHomeScreen extends React.Component {
             this.state.mode === 'userProfile' &&
             <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', width: this.state.windowWidth }}>
               <View style={{
-                marginTop: 10,
-                marginHorizontal: 10,
+                margin: 10,
                 width: this.state.windowWidth - 20,
                 borderColor: '#FFE8A1',
                 backgroundColor: '#FFF2CC',
@@ -444,24 +446,21 @@ class UserHomeScreen extends React.Component {
               }}>
                 <Text style={{ fontSize: 20 }}>{getI18nText('答案管理')}</Text>
                 <View style={{
-                  marginTop: 10,
-                  marginHorizontal: 10,
+                  marign: 10,
                   width: this.state.windowWidth - 40,
                   borderColor: '#FFE8A1',
-                  backgroundColor: '#ecf0f1',
+                  backgroundColor: '#F5F5F5',
                   borderWidth: 1,
                   borderRadius: 10,
                   alignItems: 'center'
                 }}>
-                  <Text style={{ fontSize: 16 }}>{getI18nText('本地答案: ') + this.state.remoteAnswerCount}    {getI18nText('远程答案: ') + this.state.localAnswerCount}</Text>
+                  <Text style={{ fontSize: 16 }}>{getI18nText('本地答案: ') + this.state.localAnswerCount}    {getI18nText('远程答案: ') + this.state.remoteAnswerCount}</Text>
                 </View>
-                <View style={{ height: 10 }} />
                 <View style={{
-                  marginTop: 10,
-                  marginHorizontal: 10,
+                  margin: 10,
                   width: this.state.windowWidth - 40,
                   borderColor: '#FFE8A1',
-                  backgroundColor: '#ecf0f1',
+                  backgroundColor: '#F5F5F5',
                   borderWidth: 1,
                   borderRadius: 10,
                   alignItems: 'center'
@@ -475,13 +474,11 @@ class UserHomeScreen extends React.Component {
                     onPress={() => this.syncAnswers()}
                   />
                 </View>
-                <View style={{ height: 10 }} />
                 <View style={{
-                  marginTop: 10,
-                  marginHorizontal: 10,
+                  margin: 10,
                   width: this.state.windowWidth - 40,
                   borderColor: '#FFE8A1',
-                  backgroundColor: '#ecf0f1',
+                  backgroundColor: '#F5F5F5',
                   borderWidth: 1,
                   borderRadius: 10,
                   alignItems: 'center'
@@ -500,13 +497,11 @@ class UserHomeScreen extends React.Component {
                     }}
                   />
                 </View>
-                <View style={{ height: 10 }} />
                 <View style={{
-                  marginTop: 10,
-                  marginHorizontal: 10,
+                  margin: 10,
                   width: this.state.windowWidth - 40,
                   borderColor: '#FFE8A1',
-                  backgroundColor: '#ecf0f1',
+                  backgroundColor: '#F5F5F5',
                   borderWidth: 1,
                   borderRadius: 10,
                   alignItems: 'center'
@@ -533,8 +528,7 @@ class UserHomeScreen extends React.Component {
             this.state.mode === 'updatePassword' &&
             <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', width: this.state.windowWidth }}>
               <View style={{
-                marginTop: 10,
-                marginHorizontal: 10,
+                margin: 10,
                 width: this.state.windowWidth - 20,
                 borderColor: '#FFE8A1',
                 backgroundColor: '#FFF2CC',
@@ -576,8 +570,7 @@ class UserHomeScreen extends React.Component {
             this.state.mode === 'userLogin' &&
             <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', width: this.state.windowWidth }}>
               <View style={{
-                marginTop: 10,
-                marginHorizontal: 10,
+                margin: 10,
                 width: this.state.windowWidth - 20,
                 borderColor: '#FFE8A1',
                 backgroundColor: '#FFF2CC',
@@ -619,8 +612,7 @@ class UserHomeScreen extends React.Component {
             this.state.mode === 'createUser' &&
             <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', width: this.state.windowWidth }}>
               <View style={{
-                marginTop: 10,
-                marginHorizontal: 10,
+                margin: 10,
                 width: this.state.windowWidth - 20,
                 borderColor: '#FFE8A1',
                 backgroundColor: '#FFF2CC',
@@ -669,8 +661,7 @@ class UserHomeScreen extends React.Component {
             this.state.mode === 'forgetPassword' &&
             <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', width: this.state.windowWidth }}>
               <View style={{
-                marginTop: 10,
-                marginHorizontal: 10,
+                margin: 10,
                 width: this.state.windowWidth - 20,
                 borderColor: '#FFE8A1',
                 backgroundColor: '#FFF2CC',
