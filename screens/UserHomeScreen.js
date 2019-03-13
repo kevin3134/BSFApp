@@ -1,4 +1,5 @@
 import React from 'react';
+import { debounce } from 'lodash';
 import { connect } from 'react-redux';
 import { StyleSheet, View, Dimensions, KeyboardAvoidingView, Text, Image, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { getI18nText } from '../utils/I18n';
@@ -9,7 +10,7 @@ import { EventRegister } from 'react-native-event-listeners';
 import { Button, Input, Overlay } from 'react-native-elements';
 import Colors from '../constants/Colors';
 import { loadAsync } from '../dataStorage/storage';
-import { updateAnswer } from '../store/answers';
+import { updateAnswer, clearAnswers } from '../store/answers';
 import { showMessage } from "react-native-flash-message";
 
 class UserHomeScreen extends React.Component {
@@ -94,16 +95,21 @@ class UserHomeScreen extends React.Component {
     }
   }
 
+  async refreshLocalAnswerCount() {
+    const answerContent = await loadAsync(Models.Answer, null, false);
+    let localAnswerCount = 0;
+    if (answerContent && answerContent.answers) {
+      localAnswerCount = Object.keys(answerContent.answers).length;
+    }
+    this.setState({ localAnswerCount: localAnswerCount });
+  }
+
   async getAnswerCount() {
     try {
       this.setState({ busy: true, localAnswerCount: 'N/A', remoteAnswerCount: 'N/A' });
 
-      const answerContent = await loadAsync(Models.Answer, null, false);
-      let localAnswerCount = 0;
-      if (answerContent && answerContent.answers) {
-        localAnswerCount = Object.keys(answerContent.answers).length;
-      }
-      this.setState({ localAnswerCount: localAnswerCount });
+      this.refreshLocalAnswerCount();
+      debounce(() => this.refreshLocalAnswerCount(), wait = 1000)();
 
       const body = {
         accessToken: getCurrentUser().getAccessToken()
@@ -517,6 +523,16 @@ class UserHomeScreen extends React.Component {
     }
   }
 
+  async removeLocalAnswers() {
+    this.props.clearAnswers();
+    this.refreshLocalAnswerCount();
+    showMessage({
+      message: getI18nText('删除成功'),
+      duration: 3000,
+      type: "success",
+    });
+  }
+
   render() {
     const userLoggedIn = !!this.getUserLoggedIn();
     return (
@@ -619,14 +635,14 @@ class UserHomeScreen extends React.Component {
                   borderRadius: 10,
                   alignItems: 'center'
                 }}>
-                  <Text style={{ fontSize: 16, margin: 8 }}>{getI18nText('本地答案上传并覆盖远程答案')}</Text>
+                  <Text style={{ fontSize: 16, margin: 8 }}>{getI18nText('上传本地答案，并覆盖远程答案')}</Text>
                   <Button
                     containerStyle={{ width: 170 }}
                     icon={{ name: "send", size: 20, color: "white" }}
                     title={getI18nText('上传答案')}
                     buttonStyle={{ backgroundColor: Colors.yellow, margin: 10, borderRadius: 30, paddingLeft: 10, paddingRight: 20 }}
                     onPress={() => {
-                      Alert.alert(getI18nText('确认'), getI18nText('请确认是否上传并覆盖远程的答案？'), [
+                      Alert.alert(getI18nText('确认'), getI18nText('请确认是否上传本地答案，并覆盖远程的答案（所有远程的答案将会丢失）？'), [
                         { text: getI18nText('确认'), onPress: () => { this.uploadAnswers() } },
                         { text: getI18nText('取消'), onPress: () => { } },
                       ]);
@@ -642,15 +658,38 @@ class UserHomeScreen extends React.Component {
                   borderRadius: 10,
                   alignItems: 'center'
                 }}>
-                  <Text style={{ fontSize: 16, margin: 8 }}>{getI18nText('下载远程答案，覆盖本地答案')}</Text>
+                  <Text style={{ fontSize: 16, margin: 8 }}>{getI18nText('下载远程答案，并覆盖本地答案')}</Text>
                   <Button
                     containerStyle={{ width: 170 }}
                     icon={{ name: "send", size: 20, color: "white" }}
                     title={getI18nText('下载答案')}
                     buttonStyle={{ backgroundColor: Colors.yellow, margin: 10, borderRadius: 30, paddingLeft: 10, paddingRight: 20 }}
                     onPress={() => {
-                      Alert.alert(getI18nText('确认'), getI18nText('请确认是否下载并覆盖本地的答案（所有本地修改的答案将会丢失）？'), [
+                      Alert.alert(getI18nText('确认'), getI18nText('请确认是否下载远程答案，并覆盖本地答案（所有本地修改的答案将会丢失）？'), [
                         { text: getI18nText('确认'), onPress: () => { this.downloadAnswers() } },
+                        { text: getI18nText('取消'), onPress: () => { } },
+                      ]);
+                    }}
+                  />
+                </View>
+                <View style={{
+                  margin: 10,
+                  width: this.state.windowWidth - 40,
+                  borderColor: '#FFE8A1',
+                  backgroundColor: '#F5F5F5',
+                  borderWidth: 1,
+                  borderRadius: 10,
+                  alignItems: 'center'
+                }}>
+                  <Text style={{ fontSize: 16, margin: 8 }}>{getI18nText('删除所有本地答案')}</Text>
+                  <Button
+                    containerStyle={{ width: 170 }}
+                    icon={{ name: "send", size: 20, color: "white" }}
+                    title={getI18nText('删除本地答案')}
+                    buttonStyle={{ backgroundColor: Colors.yellow, margin: 10, borderRadius: 30, paddingLeft: 10, paddingRight: 20 }}
+                    onPress={() => {
+                      Alert.alert(getI18nText('确认'), getI18nText('请确认是否删除所有本地答案（所有本地答案将会丢失，无法恢复）？'), [
+                        { text: getI18nText('确认'), onPress: () => { this.removeLocalAnswers() } },
                         { text: getI18nText('取消'), onPress: () => { } },
                       ]);
                     }}
@@ -890,6 +929,7 @@ class UserHomeScreen extends React.Component {
               }
             </View>
           </View>
+          <View style={{ height: 50 }} />
         </ScrollView>
         {
           this.state.busy &&
@@ -919,7 +959,8 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 const mapDispatchToProps = {
-  updateAnswer
+  updateAnswer,
+  clearAnswers
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserHomeScreen)
