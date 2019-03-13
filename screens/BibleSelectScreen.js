@@ -20,6 +20,7 @@ import { downloadBibleAsync } from '../dataStorage/storage';
 import { CheckBox } from 'react-native-elements';
 import { EventRegister } from 'react-native-event-listeners';
 import { showMessage } from "react-native-flash-message";
+import Colors from '../constants/Colors';
 
 export default class BibleSelectScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -185,6 +186,7 @@ export default class BibleSelectScreen extends React.Component {
                   Models.BibleVersions[lang].map((bible) => (
                     <CheckBox
                       containerStyle={{ width: this.state.windowWidth - 10 }}
+                      checkedColor={Colors.yellow}
                       key={keyIndex++}
                       title={bible.name}
                       checked={this.state.selectedBibles.indexOf(bible.id) !== -1}

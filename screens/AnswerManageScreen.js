@@ -116,12 +116,13 @@ class AnswerManageScreen extends React.Component {
   render() {
     return (
       <KeyboardAvoidingView style={styles.container} behavior='padding' keyboardVerticalOffset={0}>
+      
         <ButtonGroup
+          buttons={[getI18nText('导出'), getI18nText('导入')]}
+          selectedIndex={this.state.selectedIndex}
           onPress={(selectedIndex) => {
             this.setState({ selectedIndex })
           }}
-          selectedIndex={this.state.selectedIndex}
-          buttons={[getI18nText('导出'), getI18nText('导入')]}
         />
         {
           this.state.selectedIndex == 0 &&
@@ -164,7 +165,7 @@ class AnswerManageScreen extends React.Component {
               <Button
                 icon={{ name: "import-export", size: 20, color: "white" }}
                 title={getI18nText('导入')}
-                buttonStyle={{ backgroundColor: Colors.yellow, margin: 10, borderRadius: 30, paddingLeft: 10, paddingRight: 20 }}
+                buttonStyle={{ backgroundColor: Colors.yellow, margin: 10, borderRadius: 30, paddingLeft: 10, paddingRight: 20, width: 150 }}
                 onPress={() => this.import()}
               />
             </View>
