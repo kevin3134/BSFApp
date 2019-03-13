@@ -50,7 +50,6 @@ async function saveUserAsync(user) {
 export default class User {
   cellphone = '';
   loggedOn = false;
-  offlineMode = false;
   language = Models.DefaultLanguage;
   bibleVersion = Models.DefaultBibleVersion;
   bibleVersion2 = Models.DefaultBibleVersion2;
@@ -61,6 +60,7 @@ export default class User {
   readDiscussions = {};
   email = '';
   accessToken = '';
+  nickname = 'BSFer';
 
   isBibleVersionValid(version) {
     if (!this.validBibles) {
@@ -90,9 +90,6 @@ export default class User {
         // we don't use the same version
         this.bibleVersion2 = existingUser.bibleVersion2 === existingUser.bibleVersion ? null : existingUser.bibleVersion2;
       }
-      if (existingUser.offlineMode) {
-        this.offlineMode = true;
-      }
       if (existingUser.audioBook) {
         this.audioBook = existingUser.audioBook;
         if (this.audioBook % 1000 < 1 || this.audioBook / 1000 % 1000 > 66) {
@@ -113,6 +110,9 @@ export default class User {
       }
       if (existingUser.accessToken) {
         this.accessToken = existingUser.accessToken;
+      }
+      if (existingUser.nickname) {
+        this.nickname = existingUser.nickname;
       }
       this.loggedOn = true;
 
@@ -164,14 +164,6 @@ export default class User {
     return null;
   }
 
-  getIsOfflineMode() {
-    if (!this.isLoggedOn()) {
-      return false;
-    }
-
-    return this.offlineMode;
-  }
-
   getAudioBibleBook() {
     if (!this.isLoggedOn()) {
       return 1 * 1000 + 1;
@@ -198,15 +190,6 @@ export default class User {
     }
 
     this.audioBook = id;
-    await saveUserAsync(this.getUserInfo());
-    this.logUserInfo();
-  }
-
-  async setIsOfflineModeAsync(value) {
-    if (!this.isLoggedOn()) {
-      return;
-    }
-    this.offlineMode = value;
     await saveUserAsync(this.getUserInfo());
     this.logUserInfo();
   }
@@ -367,13 +350,13 @@ export default class User {
       cellphone: this.cellphone,
       language: this.language,
       bibleVersion: this.bibleVersion,
-      offlineMode: this.offlineMode,
       audioBook: this.audioBook,
       fontSize: this.fontSize,
       bibleVersion2: this.bibleVersion2,
       readDiscussions: this.readDiscussions,
       email: this.email,
-      accessToken: this.accessToken
+      accessToken: this.accessToken,
+      nickname: this.nickname
     };
   }
 
@@ -513,11 +496,28 @@ export default class User {
     return this.accessToken;
   }
 
-  async setLoginInfoAsync(email, accessToken) {
-    this.email = email;
-    this.accessToken = accessToken;
+  async setUserInfoAsync(user) {
+    if (user.email !== undefined) {
+      this.email = user.email;
+    }
+    if (user.accessToken !== undefined) {
+      this.accessToken = user.accessToken;
+    }
+    if (user.nickname !== undefined) {
+      this.nickname = user.nickname;
+    }
+    if (user.cellphone !== undefined) {
+      this.cellphone = user.cellphone;
+    }
     await saveUserAsync(this.getUserInfo());
     this.logUserInfo();
+  }
+
+  getNickName() {
+    if (!this.isLoggedOn()) {
+      return '';
+    }
+    return this.nickname;
   }
 }
 

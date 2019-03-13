@@ -34,6 +34,8 @@ class UserHomeScreen extends React.Component {
     this.state = {
       mode: userLoggedIn ? 'userProfile' : 'userLogin',
       email: getCurrentUser().getEmail(),
+      cellphone: getCurrentUser().getCellphone(),
+      nickname: getCurrentUser().getNickName(),
       password: '',
       password2: '',
       busy: false,
@@ -59,12 +61,37 @@ class UserHomeScreen extends React.Component {
 
   componentDidMount() {
     if (this.state.mode === 'userProfile') {
-      this.getAnswerCount();
+      this.getUserProfile();
     }
   }
 
   componentWillUnmount() {
     EventRegister.removeEventListener(this.listener);
+  }
+
+  async getUserProfile() {
+    try {
+      this.setState({ busy: true, cellphone: '', nickname: '' });
+
+      const body = {
+        accessToken: getCurrentUser().getAccessToken()
+      };
+      const result = await callWebServiceAsync(`${Models.HostHttpsServer}/api.php?c=getUserProfile`, '', 'POST', [], body);
+      const succeed = await showWebServiceCallErrorsAsync(result);
+      if (succeed) {
+        if (result.status === 200) {
+          const userInfo = { nickname: result.body.nickname, cellphone: result.body.cellphone, email: result.body.email };
+          await getCurrentUser().setUserInfoAsync(userInfo);
+          this.setState(userInfo);
+          return;
+        }
+
+        this.handleError(result);
+      }
+    }
+    finally {
+      this.setState({ busy: false });
+    }
   }
 
   async getAnswerCount() {
@@ -106,6 +133,8 @@ class UserHomeScreen extends React.Component {
     });
 
     if (mode === 'userProfile') {
+      this.getUserProfile();
+    } else if (mode === 'answerManagement') {
       this.getAnswerCount();
     }
   }
@@ -153,7 +182,7 @@ class UserHomeScreen extends React.Component {
       const succeed = await showWebServiceCallErrorsAsync(result);
       if (succeed) {
         if (result.status === 200 && result.body.accessToken) {
-          await getCurrentUser().setLoginInfoAsync(this.state.email, result.body.accessToken);
+          await getCurrentUser().setUserInfoAsync({ accessToken: result.body.accessToken });
           if (result.body.ResetPassword) {
             this.gotoPage('updatePassword');
           } else {
@@ -197,7 +226,7 @@ class UserHomeScreen extends React.Component {
       const succeed = await showWebServiceCallErrorsAsync(result);
       if (succeed) {
         if (result.status === 201 && result.body.accessToken) {
-          await getCurrentUser().setLoginInfoAsync(this.state.email, result.body.accessToken);
+          await getCurrentUser().setUserInfoAsync({ accessToken: result.body.accessToken });
           this.gotoPage('userProfile');
           return;
         }
@@ -272,7 +301,7 @@ class UserHomeScreen extends React.Component {
       const succeed = await showWebServiceCallErrorsAsync(result);
       if (succeed) {
         if (result.status === 201 && result.body.accessToken) {
-          await getCurrentUser().setLoginInfoAsync(this.state.email, result.body.accessToken);
+          await getCurrentUser().setUserInfoAsync({ accessToken: result.body.accessToken });
           this.gotoPage('userProfile');
           return;
         }
@@ -286,7 +315,7 @@ class UserHomeScreen extends React.Component {
   }
 
   async logout() {
-    await getCurrentUser().setLoginInfoAsync(getCurrentUser().getEmail(), '');
+    await getCurrentUser().setUserInfoAsync({ email: '', accessToken: '' });
     this.gotoPage('userLogin');
   }
 
@@ -459,6 +488,35 @@ class UserHomeScreen extends React.Component {
     }
   }
 
+  async updateUserProfile() {
+    try {
+      this.setState({ busy: true });
+      const body = {
+        accessToken: getCurrentUser().getAccessToken(),
+        cellphone: this.state.cellphone,
+        nickname: this.state.nickname
+      };
+      const result = await callWebServiceAsync(`${Models.HostHttpsServer}/api.php?c=updateUserProfile`, '', 'POST', [], body);
+      const succeed = await showWebServiceCallErrorsAsync(result);
+      if (succeed) {
+        if (result.status === 200) {
+          showMessage({
+            message: getI18nText('更新成功'),
+            duration: 3000,
+            type: "success",
+          });
+          getCurrentUser().setUserInfoAsync({ cellphone: this.state.cellphone, nickname: this.state.nickname });
+          return;
+        }
+
+        this.handleError(result);
+      }
+    }
+    finally {
+      this.setState({ busy: false });
+    }
+  }
+
   render() {
     const userLoggedIn = !!this.getUserLoggedIn();
     return (
@@ -466,6 +524,52 @@ class UserHomeScreen extends React.Component {
         <ScrollView style={{ flex: 1, backgroundColor: 'white', width: this.state.windowWidth }}>
           {
             this.state.mode === 'userProfile' &&
+            <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', width: this.state.windowWidth }}>
+              <View style={{
+                margin: 10,
+                width: this.state.windowWidth - 20,
+                borderColor: '#FFE8A1',
+                backgroundColor: '#FFF2CC',
+                borderWidth: 1,
+                borderRadius: 10,
+                alignItems: 'center'
+              }}>
+                <Text style={{ fontSize: 20 }}>{getI18nText('修改用户资料')}</Text>
+                <Input
+                  containerStyle={{ marginTop: 20 }}
+                  label={getI18nText('邮箱(只读)')}
+                  defaultValue={getCurrentUser().getEmail()}
+                  editable={false}
+                />
+                <Input
+                  containerStyle={{ marginTop: 20 }}
+                  ref={(input) => this.cellphoneInput = input}
+                  label={getI18nText('手机号码')}
+                  defaultValue={this.state.cellphone}
+                  errorStyle={{ color: 'red' }}
+                  onChangeText={(text) => { this.setState({ cellphone: text }); }}
+                />
+                <Input
+                  containerStyle={{ marginTop: 20 }}
+                  ref={(input) => this.nicknameInput = input}
+                  label={getI18nText('用户昵称')}
+                  defaultValue={this.state.nickname}
+                  errorStyle={{ color: 'red' }}
+                  onChangeText={(text) => { this.setState({ nickname: text }); }}
+                />
+                <Button
+                  containerStyle={{ width: 170 }}
+                  icon={{ name: "send", size: 20, color: "white" }}
+                  title={getI18nText('提交')}
+                  buttonStyle={{ backgroundColor: Colors.yellow, margin: 10, borderRadius: 30, paddingLeft: 10, paddingRight: 20 }}
+                  onPress={() => this.updateUserProfile()}
+                />
+              </View>
+            </View>
+          }
+
+          {
+            this.state.mode === 'answerManagement' &&
             <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', width: this.state.windowWidth }}>
               <View style={{
                 margin: 10,
@@ -732,53 +836,57 @@ class UserHomeScreen extends React.Component {
               }
 
               {
-                !userLoggedIn && this.state.mode !== 'createUser' && <View style={{ width: 7 }} />
-              }
-              {
                 !userLoggedIn && this.state.mode !== 'createUser' &&
-                <TouchableOpacity onPress={() => { this.gotoPage('createUser') }}>
-                  <Text style={{ fontSize: 18, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('创建新用户')}</Text>
-                </TouchableOpacity>
+                <View style={{ marginLeft: 7 }}>
+                  <TouchableOpacity onPress={() => { this.gotoPage('createUser') }}>
+                    <Text style={{ fontSize: 18, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('创建新用户')}</Text>
+                  </TouchableOpacity>
+                </View>
               }
 
-              {
-                !userLoggedIn && this.state.mode !== 'forgetPassword' && <View style={{ width: 7 }} />
-              }
               {
                 !userLoggedIn && this.state.mode !== 'forgetPassword' &&
-                <TouchableOpacity onPress={() => { this.gotoPage('forgetPassword') }}>
-                  <Text style={{ fontSize: 18, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('找回密码')}</Text>
-                </TouchableOpacity>
+                <View style={{ marginLeft: 7 }}>
+                  <TouchableOpacity onPress={() => { this.gotoPage('forgetPassword') }}>
+                    <Text style={{ fontSize: 18, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('找回密码')}</Text>
+                  </TouchableOpacity>
+                </View>
               }
 
-              {
-                userLoggedIn && <View style={{ width: 7 }} />
-              }
               {
                 userLoggedIn && this.state.mode !== 'userProfile' &&
-                <TouchableOpacity onPress={() => { this.gotoPage('userProfile') }}>
-                  <Text style={{ fontSize: 18, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('修改用户资料')}</Text>
-                </TouchableOpacity>
+                <View style={{ marginLeft: 7 }}>
+                  <TouchableOpacity onPress={() => { this.gotoPage('userProfile') }}>
+                    <Text style={{ fontSize: 18, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('修改用户资料')}</Text>
+                  </TouchableOpacity>
+                </View>
               }
 
               {
-                userLoggedIn && <View style={{ width: 7 }} />
+                userLoggedIn && this.state.mode !== 'answerManagement' &&
+                <View style={{ marginLeft: 7 }}>
+                  <TouchableOpacity onPress={() => { this.gotoPage('answerManagement') }}>
+                    <Text style={{ fontSize: 18, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('答案管理')}</Text>
+                  </TouchableOpacity>
+                </View>
               }
+
               {
                 userLoggedIn && this.state.mode !== 'updatePassword' &&
-                <TouchableOpacity onPress={() => { this.gotoPage('updatePassword') }}>
-                  <Text style={{ fontSize: 18, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('修改密码')}</Text>
-                </TouchableOpacity>
+                <View style={{ marginLeft: 7 }}>
+                  <TouchableOpacity onPress={() => { this.gotoPage('updatePassword') }}>
+                    <Text style={{ fontSize: 18, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('修改密码')}</Text>
+                  </TouchableOpacity>
+                </View>
               }
 
               {
-                userLoggedIn && <View style={{ width: 7 }} />
-              }
-              {
                 userLoggedIn &&
-                <TouchableOpacity onPress={() => { this.logout() }}>
-                  <Text style={{ fontSize: 18, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('登出')}</Text>
-                </TouchableOpacity>
+                <View style={{ marginLeft: 7 }}>
+                  <TouchableOpacity onPress={() => { this.logout() }}>
+                    <Text style={{ fontSize: 18, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('登出')}</Text>
+                  </TouchableOpacity>
+                </View>
               }
             </View>
           </View>
