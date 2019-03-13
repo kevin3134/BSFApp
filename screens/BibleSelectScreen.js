@@ -19,6 +19,7 @@ import { getCurrentUser } from '../utils/user';
 import { downloadBibleAsync } from '../dataStorage/storage';
 import { CheckBox } from 'react-native-elements';
 import { EventRegister } from 'react-native-event-listeners';
+import { showMessage } from "react-native-flash-message";
 
 export default class BibleSelectScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -112,7 +113,12 @@ export default class BibleSelectScreen extends React.Component {
 
       const result = await this.ensureBibleIsDownloadedAsync(name, version);
       if (!result) {
-        Alert.alert(getI18nText('错误'), getI18nText('下载失败'));
+        showMessage({
+          message: getI18nText('错误'),
+          description: getI18nText('下载失败'),
+          duration: 5000,
+          type: "danger"
+        });
         return;
       }
 

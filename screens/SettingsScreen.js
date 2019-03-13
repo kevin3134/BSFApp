@@ -14,6 +14,7 @@ import { connectActionSheet } from '@expo/react-native-action-sheet';
 import { NavigationActions } from 'react-navigation';
 import { FontAwesome, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
+import { showMessage } from "react-native-flash-message";
 
 @connectActionSheet class SettingsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -214,9 +215,19 @@ import Colors from '../constants/Colors';
           await FileSystem.deleteAsync(fileUri, { idempotent: true });
         }
       }
-      Alert.alert('Completed', `Removed ${freeSize} bytes`);
+      showMessage({
+        message: getI18nText('Completed'),
+        description: `Removed ${freeSize} bytes`,
+        duration: 3000,
+        type: "success"
+      });
     } catch (e) {
-      Alert.alert('Error', JSON.stringify(e));
+      showMessage({
+        message: getI18nText('错误'),
+        description: JSON.stringify(e),
+        duration: 5000,
+        type: "danger"
+      });
     }
   }
 

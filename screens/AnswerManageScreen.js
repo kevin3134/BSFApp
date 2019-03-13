@@ -5,12 +5,12 @@ import { Entypo } from '@expo/vector-icons';
 import { updateAnswer } from '../store/answers';
 import { loadAsync } from '../dataStorage/storage';
 import { getI18nText } from '../utils/I18n';
-import { Button } from 'react-native-elements';
+import { Button, ButtonGroup } from 'react-native-elements';
 import { Models } from '../dataStorage/models';
 import { getCurrentUser } from '../utils/user';
-import SegmentedControlTab from 'react-native-segmented-control-tab';
 import { EventRegister } from 'react-native-event-listeners';
 import { showMessage } from "react-native-flash-message";
+import Colors from '../constants/Colors';
 
 class AnswerManageScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -116,19 +116,18 @@ class AnswerManageScreen extends React.Component {
   render() {
     return (
       <KeyboardAvoidingView style={styles.container} behavior='padding' keyboardVerticalOffset={0}>
-        <View style={{ margin: 10 }}>
-          <SegmentedControlTab
-            values={[getI18nText('导出'), getI18nText('导入')]}
-            selectedIndex={this.state.selectedIndex}
-            onTabPress={(index) => this.setState({ selectedIndex: index })}
-          />
-        </View>
-
+        <ButtonGroup
+          onPress={(selectedIndex) => {
+            this.setState({ selectedIndex })
+          }}
+          selectedIndex={this.state.selectedIndex}
+          buttons={[getI18nText('导出'), getI18nText('导入')]}
+        />
         {
           this.state.selectedIndex == 0 &&
           <View style={{ alignItems: 'center' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ fontSize: 15 }}>{getI18nText('请全选以下文本后复制，或者导出')} </Text>
+              <Text style={{ fontSize: 14 }}>{getI18nText('请全选以下文本后复制，或者导出')} </Text>
               <TouchableOpacity onPress={this.export.bind(this)}>
                 <Entypo
                   name='share-alternative'
@@ -163,11 +162,11 @@ class AnswerManageScreen extends React.Component {
             />
             <View style={{ alignItems: 'center' }}>
               <Button
-                backgroundColor='#397EDC'
-                borderRadius={5}
-                containerViewStyle={{ width: 130 }}
+                icon={{ name: "import-export", size: 20, color: "white" }}
                 title={getI18nText('导入')}
-                onPress={this.import.bind(this)} />
+                buttonStyle={{ backgroundColor: Colors.yellow, margin: 10, borderRadius: 30, paddingLeft: 10, paddingRight: 20 }}
+                onPress={() => this.import()}
+              />
             </View>
           </View>
         }

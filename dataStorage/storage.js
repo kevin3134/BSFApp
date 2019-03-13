@@ -3,6 +3,7 @@ import { debounce } from 'lodash';
 import Storage from 'react-native-storage';
 import { Constants, FileSystem } from 'expo';
 import { Models, CachePolicy } from './models';
+import { showMessage } from "react-native-flash-message";
 
 export const isPreview = Constants.manifest && Constants.manifest.id && Constants.manifest.id !== '@turbozv/CBSFApp';
 export const appVersion = Constants.manifest.publishedTime ? `${Constants.manifest.publishedTime.split('T')[0].replace(/-/g, '.')}` : Constants.manifest.version;
@@ -329,31 +330,42 @@ async function callWebServiceAsync(url, api, method, headersUnused, body) {
 }
 
 async function showWebServiceCallErrorsAsync(result, acceptStatus, showUI = true) {
-    if (!result || !result.status) {
+    if (!result || !result.status || result.status === -1) {
         if (showUI) {
-            await Alert.alert('Error', 'Please check your network connection');
+            showMessage({
+                message: getI18nText('错误'),
+                duration: 10000,
+                description: getI18nText('Please check your network connection'),
+                type: "danger",
+            });
         }
     }
     else if (acceptStatus) {
         if (result.status == acceptStatus) {
             return true;
-        } else {
-            let message = 'HTTP status ' + result.status;
-            if (result.body) {
-                if (result.body.Message) {
-                    message = message + "\n\n" + result.body.Message;
-                }
-                if (result.body.ExceptionMessage) {
-                    message = message + "\n\n" + result.body.ExceptionMessage;
-                }
-                if (result.body.ExceptionType) {
-                    message = message + "\n\n" + result.body.ExceptionType;
-                }
+        }
+
+        const message = 'HTTP status ' + result.status;
+        if (result.body) {
+            if (result.body.Message) {
+                message = message + "\n\n" + result.body.Message;
             }
-            if (showUI) {
-                await Alert.alert('Error', message);
+            if (result.body.ExceptionMessage) {
+                message = message + "\n\n" + result.body.ExceptionMessage;
+            }
+            if (result.body.ExceptionType) {
+                message = message + "\n\n" + result.body.ExceptionType;
             }
         }
+        if (showUI) {
+            showMessage({
+                message: getI18nText('错误'),
+                duration: 5000,
+                description: message,
+                type: "danger",
+            });
+        }
+
         return false;
     }
 
