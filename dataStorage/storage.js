@@ -4,6 +4,9 @@ import Storage from 'react-native-storage';
 import { Constants, FileSystem } from 'expo';
 import { Models, CachePolicy } from './models';
 
+export const isPreview = Constants.manifest && Constants.manifest.id && Constants.manifest.id !== '@turbozv/CBSFApp';
+export const appVersion = Constants.manifest.publishedTime ? `${Constants.manifest.publishedTime.split('T')[0].replace(/-/g, '.')}` : Constants.manifest.version;
+
 if (!global.storage) {
     global.storage = new Storage({
         size: 100000,

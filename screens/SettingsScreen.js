@@ -3,8 +3,9 @@ import { connect } from 'react-redux'
 import { ScrollView, StyleSheet, View, Alert, Image } from 'react-native';
 import { Constants, StoreReview, FileSystem } from 'expo';
 import { Models } from '../dataStorage/models';
+import { appVersion } from '../dataStorage/storage';
 import { getCurrentUser } from '../utils/user';
-import { requestBooks, clearBooks } from "../store/books.js";
+import { requestBooks, clearBooks } from "../store/books";
 import SettingsList from 'react-native-settings-list';
 import { getI18nText } from '../utils/I18n';
 import { clearLesson } from '../store/lessons.js'
@@ -68,7 +69,7 @@ import Colors from '../constants/Colors';
       this.setState({ language: getCurrentUser().getLanguageDisplayName() });
 
       const setParamsAction = NavigationActions.setParams({
-        params: { title: 'BSF课程' },
+        params: { title: getI18nText('BSF课程') },
         key: 'Home',
       })
       this.props.navigation.dispatch(setParamsAction);
@@ -370,7 +371,7 @@ import Colors from '../constants/Colors';
                     source={require('../assets/images/icon-android.png')} />
                 </View>
               }
-              title={getI18nText('关于CBSF')}
+              title={getI18nText('关于CBSF') + ` (${appVersion})`}
               titleStyle={{ fontSize }}
               titleInfoStyle={{ fontSize }}
               hasNavArrow={true}

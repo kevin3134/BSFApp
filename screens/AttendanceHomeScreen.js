@@ -60,7 +60,7 @@ export default class AttendanceHomeScreen extends React.Component {
         let rates = {};
         let totalRate = 0;
         let totalRateCount = 0;
-        for (let i = 1; i < 30; i++) {
+        for (let i = 0; i < 30; i++) {
           const { displayName, value } = this.getRate(data.attendance, i);
           if (value) {
             totalRate += value;

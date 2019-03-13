@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, EvilIcons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Constants, FileSystem, Updates } from 'expo';
 import {
   ScrollView,
@@ -26,6 +26,7 @@ import { Models } from '../dataStorage/models';
 import { resetGlobalCache } from '../dataStorage/storage';
 import Colors from '../constants/Colors';
 import { EventRegister } from 'react-native-event-listeners';
+import { isPreview, appVersion } from '../dataStorage/storage';
 
 async function checkForAppUpdate() {
   const { isAvailable } = await Updates.checkForUpdateAsync();
@@ -38,28 +39,19 @@ async function checkForAppUpdate() {
 
 class HomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
-    const title = navigation.state.params && navigation.state.params.title ? navigation.state.params.title : 'BSF课程';
-    const testVersion = (Constants.manifest && Constants.manifest.id && Constants.manifest.id !== '@turbozv/CBSFApp');
-    const { manifest } = Constants;
-    const version = manifest.publishedTime ? `${manifest.publishedTime.split('T')[0].replace(/-/g, '.')}` :
-      `${manifest.version}`;
     return {
-      title: getI18nText(title),
+      title: getI18nText('BSF课程'),
       headerLeft: (
-        testVersion ?
-          <View style={{ marginLeft: 10 }} >
-            <TouchableOpacity onPress={() => { userHome() }}>
-              <Image
-                style={{ width: 34, height: 34 }}
-                source={require('../assets/images/MySettings.On.png')} />
-            </TouchableOpacity>
-          </View>
-          : null
+        <View style={{ marginLeft: 10 }} >
+          <TouchableOpacity onPress={() => { userHome() }}>
+            <FontAwesome name='user-o' size={28} color='white' />
+          </TouchableOpacity>
+        </View>
       ),
       headerRight: (
         <View style={{ flexDirection: 'row' }}>
           {
-            testVersion &&
+            isPreview &&
             <View>
               <TouchableOpacity onPress={() => {
                 checkForAppUpdate();
@@ -74,7 +66,7 @@ class HomeScreen extends React.Component {
                     color: '#ecf0f1',
                     fontWeight: 'bold',
                     fontSize: 10
-                  }}>{version}</Text>
+                  }}>{appVersion}</Text>
                 </View>
               </TouchableOpacity>
             </View>
