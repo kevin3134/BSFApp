@@ -335,7 +335,7 @@ class UserHomeScreen extends React.Component {
       }
 
       // Merge answers
-      let downloadAnswers = result.body.answers ? (result.body.answers === '[]' ? {} : JSON.parse(result.body.answers)) : {};
+      let downloadAnswers = result.body.answer ? (result.body.answer === '[]' ? {} : JSON.parse(result.body.answer)) : {};
 
       const answerContent = await loadAsync(Models.Answer, null, false);
       let localAnswers = {};
@@ -471,7 +471,7 @@ class UserHomeScreen extends React.Component {
         return;
       }
 
-      let downloadAnswers = result.body.answers ? (result.body.answers === '[]' ? {} : JSON.parse(result.body.answers)) : {};
+      let downloadAnswers = result.body.answer ? (result.body.answer === '[]' ? {} : JSON.parse(result.body.answer)) : {};
       for (let i in downloadAnswers) {
         this.props.updateAnswer(i, downloadAnswers[i]);
       }

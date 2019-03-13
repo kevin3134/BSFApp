@@ -457,7 +457,7 @@ export default class User {
     }
 
     const id = this.getQuestionId(question);
-    console.log('getDiscussionHasUnread: ' + JSON.stringify({ id, localTimestamp: this.readDiscussions[id], serverTimestamp: this.permissions.discussions[id] }));
+    // console.log('getDiscussionHasUnread: ' + JSON.stringify({ id, localTimestamp: this.readDiscussions[id], serverTimestamp: this.permissions.discussions[id] }));
 
     const serverTimestamp = this.permissions.discussions[id];
     if (!serverTimestamp) {
@@ -484,7 +484,7 @@ export default class User {
       }
     }
 
-    console.log('getDiscussionHasUnreadByDay: ' + JSON.stringify({ result }));
+    // console.log('getDiscussionHasUnreadByDay: ' + JSON.stringify({ result }));
     return result;
   }
 

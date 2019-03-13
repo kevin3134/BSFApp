@@ -41,6 +41,7 @@ const ACTION_HANDLERS = {
         [action.payload.questionId]: action.payload
       })
     });
+    console.log(`Save answer [${action.payload.questionId}]: ${action.payload.answerText}`)
 
     debouncedSaveAnswer(newState)
     return newState;
