@@ -56,8 +56,8 @@ const ACTION_HANDLERS = {
   },
   [CLEAR_ANSWERS]: (state, action) => {
     console.log('Clear answers');
-    saveAsync({}, Models.Answer);
-    return {};
+    saveAsync(initialState, Models.Answer);
+    return initialState;
   }
 }
 

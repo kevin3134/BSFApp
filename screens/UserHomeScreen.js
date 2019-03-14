@@ -596,7 +596,7 @@ class UserHomeScreen extends React.Component {
                 borderRadius: 10,
                 alignItems: 'center'
               }}>
-                <Text style={{ fontSize: 20 }}>{getI18nText('答案管理')}</Text>
+                <Text style={{ fontSize: 20, margin: 3 }}>{getI18nText('答案管理')}</Text>
                 <View style={{
                   marign: 10,
                   width: this.state.windowWidth - 40,
@@ -685,7 +685,7 @@ class UserHomeScreen extends React.Component {
                   <Button
                     containerStyle={{ width: 170 }}
                     icon={{ name: "send", size: 20, color: "white" }}
-                    title={getI18nText('删除本地答案')}
+                    title={getI18nText('删除')}
                     buttonStyle={{ backgroundColor: Colors.yellow, margin: 10, borderRadius: 30, paddingLeft: 10, paddingRight: 20 }}
                     onPress={() => {
                       Alert.alert(getI18nText('确认'), getI18nText('请确认是否删除所有本地答案（所有本地答案将会丢失，无法恢复）？'), [
@@ -866,7 +866,7 @@ class UserHomeScreen extends React.Component {
             </View>
           }
           <View style={{ flex: 1, marginTop: 10, backgroundColor: 'white', alignItems: 'center', width: this.state.windowWidth }}>
-            <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
               {
                 !userLoggedIn && this.state.mode !== 'userLogin' &&
                 <TouchableOpacity onPress={() => { this.gotoPage('userLogin') }}>
@@ -884,7 +884,7 @@ class UserHomeScreen extends React.Component {
               }
 
               {
-                !userLoggedIn && this.state.mode !== 'forgetPassword' &&
+                this.state.mode === 'userLogin' &&
                 <View style={{ marginLeft: 7 }}>
                   <TouchableOpacity onPress={() => { this.gotoPage('forgetPassword') }}>
                     <Text style={{ fontSize: 18, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('找回密码')}</Text>
