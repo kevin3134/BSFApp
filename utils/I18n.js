@@ -119,6 +119,7 @@ const text = {
     '重复密码(至少6位)',
     '重复新密码(至少6位)',
     '登出',
+    '没有权限',
   ],
   cht: [
     "BSF課程",
@@ -237,6 +238,7 @@ const text = {
     '重復密碼(至少6位)',
     '重復新密碼(至少6位)',
     '登出',
+    '沒有權限',
   ],
   eng: [
     "BSF Lessons",
@@ -355,6 +357,7 @@ const text = {
     'Repeat password(At least 6 chars)',
     'Repeat new password(At least 6 chars)',
     'Logout',
+    'No permission',
   ],
   spa: [
     "BSF Lecciones",
@@ -473,6 +476,7 @@ const text = {
     'Repetir contraseña (al menos 6 caracteres)',
     'Repetir nueva contraseña (al menos 6 caracteres)',
     'Cerrar sesión',
+    'Sin autorización',
   ]
 };
 
