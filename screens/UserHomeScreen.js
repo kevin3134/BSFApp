@@ -13,6 +13,7 @@ import { loadAsync } from '../dataStorage/storage';
 import { updateAnswer, clearAnswers } from '../store/answers';
 import { showMessage } from "react-native-flash-message";
 import { syncAnswersAsync } from '../utils/answers';
+import { WebBrowser } from 'expo';
 
 class UserHomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -795,9 +796,22 @@ class UserHomeScreen extends React.Component {
                 <CheckBox
                   containerStyle={{ width: this.state.windowWidth - 20, backgroundColor: '#FFF2CC' }}
                   checkedColor={Colors.yellow}
-                  title={getI18nText('I agree to send my entered data (user profile, answers) in CBSF app to CBSF server.')}
+                  title={getI18nText('我已经阅读并同意以下条款')}
                   checked={this.state.agreeEULA}
                   onPress={() => this.setState({ agreeEULA: !this.state.agreeEULA })} />
+                <View style={{ flexDirection: 'row' }}>
+                  <TouchableOpacity onPress={() => {
+                    WebBrowser.openBrowserAsync('https://www.mycbsf.org/tou.html');
+                  }}>
+                    <Text style={{ fontSize: 14, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('合约条款')}</Text>
+                  </TouchableOpacity>
+                  <View style={{ width: 10 }} />
+                  <TouchableOpacity onPress={() => {
+                    WebBrowser.openBrowserAsync('https://www.mycbsf.org/privacy.html');
+                  }}>
+                    <Text style={{ fontSize: 14, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('隐私条款')}</Text>
+                  </TouchableOpacity>
+                </View>
                 <Button
                   containerStyle={{ width: 170 }}
                   icon={{ name: "send", size: 20, color: "white" }}

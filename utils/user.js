@@ -126,6 +126,7 @@ export default class User {
     const succeed = await showWebServiceCallErrorsAsync(result, null, showUI);
     if (succeed && result.status === 200) {
       this.permissions = result.body;
+      EventRegister.emit('userPermissionChanged', window);
     }
     else {
       this.permissions = {};

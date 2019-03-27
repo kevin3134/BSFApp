@@ -121,6 +121,10 @@ const text = {
     '登出',
     '用户不存在，或者密码错误',
     '没有权限',
+    '我已经阅读并同意以下条款',
+    '合约条款',
+    '隐私条款',
+    '请首先登陆或者创建用户',
   ],
   cht: [
     "BSF課程",
@@ -241,6 +245,10 @@ const text = {
     '登出',
     '用戶不存在，或者密碼錯誤',
     '沒有權限',
+    '我已經閱讀並同意以下條款',
+    '合約條款',
+    '隱私條款',
+    '請首先登陸或者創建用戶',
   ],
   eng: [
     "BSF Lessons",
@@ -361,6 +369,10 @@ const text = {
     'Logout',
     'User doesn\'t exist, or wrong password',
     'No permission',
+    'I have read and agree the following documents',
+    'Terms & Conditions',
+    'Privacy',
+    'Please login or register user first',
   ],
   spa: [
     "BSF Lecciones",
@@ -472,7 +484,7 @@ const text = {
     'Iniciar sesión',
     'Inicio de sesión caducado, vuelva a iniciar sesión',
     '¿Está seguro de eliminar todas las respuestas locales (todas las respuestas locales se perderán y no se podrán recuperar)?',
-    '¿Está seguro de sobrescribir las respuestas remotas con las locales? (Todas las respuestas remotas se sobrescribirán)？ ',
+    '¿Está seguro de sobrescribir las respuestas remotas con las locales? (Todas las respuestas remotas se sobrescribirán)？ ',
     '¿Está seguro de sobrescribir las respuestas locales con el control remoto? (Se sobrescribirán todas las respuestas locales)? ',
     'Respuestas remotas:',
     'Correo electrónico (solo lectura)',
@@ -481,6 +493,10 @@ const text = {
     'Cerrar sesión',
     'El usuario no existe, o la contraseña incorrecta',
     'Sin autorización',
+    'He leído y acepto los siguientes documentos',
+    'Términos y condiciones',
+    'Intimidad',
+    'Por favor, inicie sesión o regístrese usuario primero',
   ]
 };
 

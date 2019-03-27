@@ -31,6 +31,7 @@ import { showMessage } from "react-native-flash-message";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { syncAnswersAsync } from '../utils/answers';
 import { updateAnswer } from '../store/answers';
+import { NavigationActions } from 'react-navigation';
 
 async function checkForAppUpdate() {
   const { isAvailable } = await Updates.checkForUpdateAsync();
@@ -51,9 +52,12 @@ class HomeScreen extends React.Component {
       title: getI18nText('BSF课程'),
       headerLeft: (
         <View style={{ marginLeft: 10 }} >
-          <TouchableOpacity onPress={() => { userHome() }}>
-            <FontAwesome name='user-o' size={28} color='white' />
-          </TouchableOpacity>
+          {
+            getCurrentUser().getUserPermissions().audios &&
+            <TouchableOpacity onPress={() => { userHome() }}>
+              <FontAwesome name='user-o' size={28} color='white' />
+            </TouchableOpacity>
+          }
         </View>
       ),
       headerRight: (
@@ -79,9 +83,13 @@ class HomeScreen extends React.Component {
               </TouchableOpacity>
             </View>
           }
-          <TouchableOpacity onPress={() => { syncUserData() }}>
-            <MaterialCommunityIcons name='cloud-sync' size={34} color='white' />
-          </TouchableOpacity>
+
+          {
+            getCurrentUser().getUserPermissions().audios &&
+            <TouchableOpacity onPress={() => { syncUserData() }}>
+              <MaterialCommunityIcons name='cloud-sync' size={34} color='white' />
+            </TouchableOpacity>
+          }
           <View style={{ width: 10 }} />
           <TouchableOpacity onPress={() => { checkForContentUpdate() }}>
             <Image
@@ -116,6 +124,16 @@ class HomeScreen extends React.Component {
       this.setState({ windowWidth: window.width, windowHeight: window.height });
     });
 
+    this.listener = EventRegister.addEventListener('userPermissionChanged', (permissions) => {
+      console.log('userPermissionChanged');
+      this.props.navigation.dispatch(NavigationActions.setParams({
+        params: {},
+        key: 'Home',
+      }));
+      console.log('forceUpdate');
+      this.forceUpdate();
+    });
+
     checkForContentUpdate = () => this.checkForContentUpdate(true);
     userHome = () => this.props.navigation.navigate('UserProfile');
     syncUserData = () => this.syncUserData();
@@ -138,7 +156,7 @@ class HomeScreen extends React.Component {
     const accessToken = getCurrentUser().getAccessToken();
     if (!accessToken || accessToken.length <= 0) {
       showMessage({
-        message: getI18nText('Please create/login a user first in order to sync answers to cloud'),
+        message: getI18nText('请首先登陆或者创建用户'),
         duration: 10000,
         type: "info"
       });

@@ -18,16 +18,8 @@ import { showMessage } from "react-native-flash-message";
 
 @connectActionSheet class SettingsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
-    let title = navigation.state.params && navigation.state.params.title ? navigation.state.params.title : getI18nText('我的设置');
     return {
-      title: getI18nText(title),
-      headerLeft: (
-        <View style={{ marginLeft: 10 }} >
-          <TouchableOpacity onPress={() => { userHome() }}>
-            <FontAwesome name='user-o' size={28} color='white' />
-          </TouchableOpacity>
-        </View>
-      ),
+      title: getI18nText('我的设置')
     };
   };
 
@@ -76,11 +68,10 @@ import { showMessage } from "react-native-flash-message";
       this.reload();
       this.setState({ language: getCurrentUser().getLanguageDisplayName() });
 
-      const setParamsAction = NavigationActions.setParams({
-        params: { title: getI18nText('BSF课程') },
+      this.props.navigation.dispatch(NavigationActions.setParams({
+        params: {},
         key: 'Home',
-      })
-      this.props.navigation.dispatch(setParamsAction);
+      }));
     }
   }
 
