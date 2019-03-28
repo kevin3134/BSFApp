@@ -239,7 +239,7 @@ class UserHomeScreen extends React.Component {
       showMessage({
         message: getI18nText('提示'),
         duration: 10000,
-        description: getI18nText('Please accept the terms'),
+        description: getI18nText('请阅读并同意以下条款'),
         type: "info",
       });
       return;
@@ -482,7 +482,8 @@ class UserHomeScreen extends React.Component {
             duration: 3000,
             type: "success",
           });
-          getCurrentUser().setUserInfoAsync({ cellphone: this.state.cellphone, nickname: this.state.nickname });
+          await getCurrentUser().setUserInfoAsync({ cellphone: this.state.cellphone, nickname: this.state.nickname });
+          await getCurrentUser().reloadPermissionAsync();
           return;
         }
 
@@ -801,13 +802,13 @@ class UserHomeScreen extends React.Component {
                   onPress={() => this.setState({ agreeEULA: !this.state.agreeEULA })} />
                 <View style={{ flexDirection: 'row' }}>
                   <TouchableOpacity onPress={() => {
-                    WebBrowser.openBrowserAsync('https://www.mycbsf.org/tou.html');
+                    WebBrowser.openBrowserAsync('http://www.mycbsf.org/tou.html');
                   }}>
                     <Text style={{ fontSize: 14, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('合约条款')}</Text>
                   </TouchableOpacity>
                   <View style={{ width: 10 }} />
                   <TouchableOpacity onPress={() => {
-                    WebBrowser.openBrowserAsync('https://www.mycbsf.org/privacy.html');
+                    WebBrowser.openBrowserAsync('http://www.mycbsf.org/privacy.html');
                   }}>
                     <Text style={{ fontSize: 14, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('隐私条款')}</Text>
                   </TouchableOpacity>

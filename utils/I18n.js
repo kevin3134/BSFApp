@@ -125,6 +125,7 @@ const text = {
     '合约条款',
     '隐私条款',
     '请首先登陆或者创建用户',
+    '请阅读并同意以下条款',
   ],
   cht: [
     "BSF課程",
@@ -249,6 +250,7 @@ const text = {
     '合約條款',
     '隱私條款',
     '請首先登陸或者創建用戶',
+    '請閱讀並同意以下條款',
   ],
   eng: [
     "BSF Lessons",
@@ -373,6 +375,7 @@ const text = {
     'Terms & Conditions',
     'Privacy',
     'Please login or register user first',
+    'Please read and agree the following documents',
   ],
   spa: [
     "BSF Lecciones",
@@ -497,6 +500,7 @@ const text = {
     'Términos y condiciones',
     'Intimidad',
     'Por favor, inicie sesión o regístrese usuario primero',
+    'Por favor lea y acuerde los siguientes documentos',
   ]
 };
 

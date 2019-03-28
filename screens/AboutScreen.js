@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { getI18nText } from '../utils/I18n';
 import { EventRegister } from 'react-native-event-listeners';
-import { Constants, Updates } from 'expo';
+import { Constants, Updates, WebBrowser } from 'expo';
 import { Button } from 'react-native-elements';
 import Colors from '../constants/Colors';
 import { appVersion } from '../dataStorage/storage';
@@ -50,8 +50,23 @@ export default class AboutScreen extends React.Component {
           borderRadius: 10,
           alignItems: 'center'
         }}>
-          <Text style={{ fontSize: 18, marginHorizontal: 20, marginVertical: 10, fontWeight: 'bold' }}>This CBSF app has been developed independently from BSF but with BSF’s permission to post lesson questions. CBSF does not collect any data from BSF members but does provide a link to BSF’s official website for members who wish to gain access to all their lesson materials and supplementary resources.</Text>
+          <Text style={{ fontSize: 18, marginHorizontal: 20, marginVertical: 10, fontWeight: 'bold' }}>This CBSF app has been developed independently from BSF but with BSF’s permission to post lesson questions. CBSF does not collect any data on MyBSF.org tab from BSF members but does provide a link to BSF’s official website for members who wish to gain access to all their lesson materials and supplementary resources.</Text>
+
+          <View style={{ flexDirection: 'row', marginVertical: 10 }}>
+            <TouchableOpacity onPress={() => {
+              WebBrowser.openBrowserAsync('http://www.mycbsf.org/tou.html');
+            }}>
+              <Text style={{ fontSize: 16, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('合约条款')}</Text>
+            </TouchableOpacity>
+            <View style={{ width: 10 }} />
+            <TouchableOpacity onPress={() => {
+              WebBrowser.openBrowserAsync('http://www.mycbsf.org/privacy.html');
+            }}>
+              <Text style={{ fontSize: 16, textDecorationLine: 'underline', color: '#2980b9' }}>{getI18nText('隐私条款')}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
+
         <View style={{
           marginTop: 10,
           marginHorizontal: 10,
