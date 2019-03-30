@@ -36,8 +36,8 @@ export default class AboutScreen extends React.Component {
       this.setState({ windowWidth: window.width, windowHeight: window.height });
     }));
 
-    this.listeners.push(EventRegister.addEventListener('appUpdateAvailable', () => {
-      this.setState({ appUpdateAvailable: true });
+    this.listeners.push(EventRegister.addEventListener('appUpdateAvailable', (hasAppUpdate) => {
+      this.setState({ appUpdateAvailable: hasAppUpdate });
     }));
 
     getCurrentUser().checkForAppUpdateAsync(true);

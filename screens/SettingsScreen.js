@@ -35,8 +35,8 @@ import { EventRegister } from 'react-native-event-listeners';
   listeners = [];
 
   componentWillMount() {
-    this.listeners.push(EventRegister.addEventListener('appUpdateAvailable', () => {
-      this.setState({ appUpdateAvailable: true });
+    this.listeners.push(EventRegister.addEventListener('appUpdateAvailable', (hasAppUpdate) => {
+      this.setState({ appUpdateAvailable: hasAppUpdate });
     }));
 
     this.onCellphoneChanged();

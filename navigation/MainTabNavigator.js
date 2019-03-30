@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image } from 'react-native';
+import { Image, View } from 'react-native';
 import { TabNavigator, TabBarBottom } from 'react-navigation';
 import Colors from '../constants/Colors';
 import HomeScreen from '../screens/HomeScreen';
@@ -27,6 +27,7 @@ export default TabNavigator(
       tabBarIcon: ({ focused }) => {
         const { routeName } = navigation.state;
         let image;
+        let showUpdateRedDot = false;
         switch (routeName) {
           case 'Home':
             image = focused ? require('../assets/images/Classes.On.png') : require('../assets/images/Classes.Off.png');
@@ -39,12 +40,28 @@ export default TabNavigator(
             break;
           case 'Settings':
             image = focused ? require('../assets/images/MySettings.On.png') : require('../assets/images/MySettings.Off.png');
+            showUpdateRedDot = navigation.state.params && navigation.state.params.hasAppUpdate;
             break;
         }
         return (
-          <Image
-            style={{ width: 30, height: 30 }}
-            source={image} />
+          <View>
+            <Image
+              style={{ width: 30, height: 30 }}
+              source={image} />
+            {
+              showUpdateRedDot &&
+              <View
+                style={{
+                  position: 'absolute',
+                  backgroundColor: 'red',
+                  height: 9,
+                  width: 9,
+                  borderRadius: 9,
+                  right: 0,
+                  top: 0
+                }} />
+            }
+          </View>
         );
       },
     }),

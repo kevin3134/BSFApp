@@ -51,7 +51,7 @@ class HomeScreen extends React.Component {
     return {
       title: getI18nText('BSF课程'),
       headerLeft: (
-        <View style={{ marginLeft: 10 }} >
+        <View style={{ marginLeft: 14 }} >
           {
             getCurrentUser().getUserPermissions().audios &&
             <TouchableOpacity onPress={() => { userHome() }}>
@@ -131,6 +131,13 @@ class HomeScreen extends React.Component {
       }));
       console.log('forceUpdate');
       this.forceUpdate();
+    }));
+
+    this.listeners.push(EventRegister.addEventListener('appUpdateAvailable', (hasAppUpdate) => {
+      this.props.navigation.dispatch(NavigationActions.setParams({
+        params: { hasAppUpdate },
+        key: 'Settings',
+      }));
     }));
 
     checkForContentUpdate = () => this.checkForContentUpdate(true);
