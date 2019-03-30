@@ -237,7 +237,7 @@ import { EventRegister } from 'react-native-event-listeners';
       showMessage({
         message: getI18nText('错误'),
         description: JSON.stringify(e),
-        duration: 5000,
+        duration: 3000,
         type: "danger"
       });
     }

@@ -162,7 +162,7 @@ class HomeScreen extends React.Component {
     if (!accessToken || accessToken.length <= 0) {
       showMessage({
         message: getI18nText('请首先登陆或者创建用户'),
-        duration: 10000,
+        duration: 3000,
         type: "info"
       });
       this.props.navigation.navigate('UserProfile');
@@ -172,7 +172,7 @@ class HomeScreen extends React.Component {
     syncAnswersAsync(this.props.updateAnswer, null, null, (useRemote, useLocal, useMerged) => {
       showMessage({
         message: getI18nText('合并成功'),
-        duration: 5000,
+        duration: 3000,
         description: getI18nText('使用远程答案: ') + useRemote + '\n' +
           getI18nText('使用本地答案: ') + useLocal + '\n' +
           getI18nText('使用合并答案: ') + useMerged,

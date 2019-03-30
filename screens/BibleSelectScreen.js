@@ -117,7 +117,7 @@ export default class BibleSelectScreen extends React.Component {
         showMessage({
           message: getI18nText('错误'),
           description: getI18nText('下载失败'),
-          duration: 5000,
+          duration: 3000,
           type: "danger"
         });
         return;

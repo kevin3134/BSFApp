@@ -334,7 +334,7 @@ async function showWebServiceCallErrorsAsync(result, acceptStatus, showUI = true
         if (showUI) {
             showMessage({
                 message: 'Error',
-                duration: 10000,
+                duration: 3000,
                 description: 'Please check your network connection',
                 type: "danger",
             });
@@ -352,7 +352,7 @@ async function showWebServiceCallErrorsAsync(result, acceptStatus, showUI = true
         if (showUI) {
             showMessage({
                 message: 'Error',
-                duration: 5000,
+                duration: 3000,
                 description: message,
                 type: "danger",
             });

@@ -51,7 +51,7 @@ export default class ExportAnswer extends React.Component {
         showMessage({
           message: getI18nText('错误'),
           description: getI18nText('Network error'),
-          duration: 5000,
+          duration: 3000,
           type: "danger"
         });
         return;
@@ -73,7 +73,7 @@ export default class ExportAnswer extends React.Component {
       showMessage({
         message: getI18nText('错误'),
         description: getI18nText(JSON.stringify(error)),
-        duration: 5000,
+        duration: 3000,
         type: "danger"
       });
     }
@@ -94,7 +94,7 @@ export default class ExportAnswer extends React.Component {
         showMessage({
           message: getI18nText('错误'),
           description: getI18nText('Network error'),
-          duration: 5000,
+          duration: 3000,
           type: "danger"
         });
         return;
@@ -129,7 +129,7 @@ export default class ExportAnswer extends React.Component {
       showMessage({
         message: getI18nText('错误'),
         description: getI18nText(JSON.stringify(error)),
-        duration: 5000,
+        duration: 3000,
         type: "danger"
       });
       return;
