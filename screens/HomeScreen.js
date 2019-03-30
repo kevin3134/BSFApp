@@ -112,19 +112,18 @@ class HomeScreen extends React.Component {
 
   lastCheckForContentUpdateDate = 0;
   sessionId = null;
+  listeners = [];
 
   componentWillMount() {
-    this.checkForContentUpdate(false);
-
     if (!this.props.booklist) {
       this.props.requestBooks();
     }
 
-    this.listener = EventRegister.addEventListener('screenDimensionChanged', (window) => {
+    this.listeners.push(EventRegister.addEventListener('screenDimensionChanged', (window) => {
       this.setState({ windowWidth: window.width, windowHeight: window.height });
-    });
+    }));
 
-    this.listener = EventRegister.addEventListener('userPermissionChanged', (permissions) => {
+    this.listeners.push(EventRegister.addEventListener('userPermissionChanged', (permissions) => {
       console.log('userPermissionChanged');
       this.props.navigation.dispatch(NavigationActions.setParams({
         params: {},
@@ -132,15 +131,21 @@ class HomeScreen extends React.Component {
       }));
       console.log('forceUpdate');
       this.forceUpdate();
-    });
+    }));
 
     checkForContentUpdate = () => this.checkForContentUpdate(true);
     userHome = () => this.props.navigation.navigate('UserProfile');
     syncUserData = () => this.syncUserData();
+
+    setTimeout(() => {
+      this.checkForContentUpdate(false);
+    }, 200);
   }
 
   componentWillUnmount() {
-    EventRegister.removeEventListener(this.listener);
+    this.listeners.forEach(listener => {
+      EventRegister.removeEventListener(listener);
+    });
   }
 
   downloadCallback(downloadProgress) {
@@ -181,13 +186,15 @@ class HomeScreen extends React.Component {
       return;
     }
 
-    await getCurrentUser().reloadPermissionAsync();
-    this.setState({ onRefresh: !this.state.onRefresh });
+    // Don't need to wait for it to complete
+    getCurrentUser().reloadPermissionAsync().then(() => {
+      this.setState({ onRefresh: !this.state.onRefresh });
+    });
 
     this.lastCheckForContentUpdateDate = (new Date()).getDate();
     try {
       const { localVersion, remoteVersion, localVersionString, remoteVersionString } = await getCurrentUser().getContentVersions(showUI);
-      if (localVersion == remoteVersion) {
+      if (localVersion === remoteVersion) {
         if (showUI) {
           Alert.alert(getI18nText('课程没有更新'), getI18nText('是否重新下载？') + '[' + remoteVersionString + ']', [
             { text: 'Yes', onPress: () => { this.downloadContent(remoteVersionString); } },
@@ -231,38 +238,19 @@ class HomeScreen extends React.Component {
       }
     }
 
-    // TODO: we can also download bibles
-
     this.reload();
     this.setState({ downloading: false });
   }
 
   goToLesson(lesson) {
+    getCurrentUser().checkForAppUpdateAsync();
+
     let parsed = lesson.name.split(' ');
     this.props.navigation.navigate('Lesson', { lesson, title: parsed[1] });
   }
 
-  goToHomeDiscussion(lesson) {
-    let parsed = lesson.name.split(' ');
-    this.props.navigation.navigate('HomeDiscussion', { id: lesson.id, title: ' ' + parsed[0] });
-  }
-
-  goToHomeTraining(lesson) {
-    let parsed = lesson.name.split(' ');
-    this.props.navigation.navigate('HomeTraining', { id: lesson.id, title: ' ' + parsed[0] });
-  }
-
-  goToNotes(lesson) {
-    let parsed = lesson.name.split(' ');
-    this.props.navigation.navigate('Notes', { uri: lesson.notesUri, title: ' ' + parsed[0] });
-  }
-
   goToAudio(lesson) {
     this.props.navigation.navigate('LectureMaterial', { id: lesson.id });
-  }
-
-  async onRefresh() {
-    await this.checkForContentUpdate(false);
   }
 
   render() {
@@ -290,7 +278,7 @@ class HomeScreen extends React.Component {
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
-              onRefresh={this.onRefresh.bind(this)}
+              onRefresh={() => { this.checkForContentUpdate(false); }}
             />
           }>
           <View style={styles.booksContainer}>
@@ -337,9 +325,6 @@ class HomeScreen extends React.Component {
           <Lesson
             key={lesson.id}
             goToLesson={() => this.goToLesson(lesson)}
-            goToHomeDiscussion={() => this.goToHomeDiscussion(lesson)}
-            goToHomeTraining={() => this.goToHomeTraining(lesson)}
-            goToNotes={() => this.goToNotes(lesson)}
             goToAudio={() => this.goToAudio(lesson)}
             lesson={lesson}
           />))}

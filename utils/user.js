@@ -1,7 +1,7 @@
 import { AsyncStorage } from 'react-native';
 import { Models } from '../dataStorage/models';
 import { setUserInternal, callWebServiceAsync, showWebServiceCallErrorsAsync } from '../dataStorage/storage';
-import { FileSystem } from 'expo';
+import { FileSystem, Updates } from 'expo';
 import { EventRegister } from 'react-native-event-listeners';
 
 let currentUser;
@@ -532,6 +532,27 @@ export default class User {
       return '';
     }
     return this.nickname;
+  }
+
+  lastCheckAppUpdateDay = -1;
+  async checkForAppUpdateAsync(force) {
+    const today = (new Date()).getDate();
+    // console.log(`checkForAppUpdateAsync(${force}) today=${today} lastCheckAppUpdateDay=${this.lastCheckAppUpdateDay}`);
+    if (!force && this.lastCheckAppUpdateDay === today) {
+      // console.log('Skip checking update');
+      return;
+    }
+
+    try {
+      const { isAvailable } = await Updates.checkForUpdateAsync();
+      if (isAvailable) {
+        EventRegister.emit('appUpdateAvailable');
+      }
+    } catch (e) {
+      console.log(JSON.stringify(e));
+    }
+
+    this.lastCheckAppUpdateDay = today;
   }
 }
 

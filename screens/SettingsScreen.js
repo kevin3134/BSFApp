@@ -15,6 +15,7 @@ import { NavigationActions } from 'react-navigation';
 import { FontAwesome, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 import { showMessage } from "react-native-flash-message";
+import { EventRegister } from 'react-native-event-listeners';
 
 @connectActionSheet class SettingsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -27,11 +28,24 @@ import { showMessage } from "react-native-flash-message";
     language: getCurrentUser().getLanguageDisplayName(),
     bibleVersion: getCurrentUser().getBibleVersionDisplayName(),
     fontSize: getCurrentUser().getFontSize(),
-    user: {}
+    user: {},
+    appUpdateAvailable: false
   };
 
+  listeners = [];
+
   componentWillMount() {
+    this.listeners.push(EventRegister.addEventListener('appUpdateAvailable', () => {
+      this.setState({ appUpdateAvailable: true });
+    }));
+
     this.onCellphoneChanged();
+  }
+
+  componentWillUnmount() {
+    this.listeners.forEach(listener => {
+      EventRegister.removeEventListener(listener);
+    });
   }
 
   async updateBibleVersionBasedOnLanguage(language) {
@@ -378,6 +392,19 @@ import { showMessage } from "react-native-flash-message";
                   <Image
                     style={{ width: 30, height: 30 }}
                     source={require('../assets/images/icon-android.png')} />
+                  {
+                    this.state.appUpdateAvailable &&
+                    <View
+                      style={{
+                        position: 'absolute',
+                        backgroundColor: 'red',
+                        height: 9,
+                        width: 9,
+                        borderRadius: 9,
+                        right: 0,
+                        top: 0
+                      }} />
+                  }
                 </View>
               }
               title={getI18nText('关于CBSF') + ` (${appVersion})`}

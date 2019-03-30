@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
 import { getI18nText } from '../utils/I18n';
 import { EventRegister } from 'react-native-event-listeners';
 import { Constants, Updates, WebBrowser } from 'expo';
 import { Button } from 'react-native-elements';
 import Colors from '../constants/Colors';
 import { appVersion } from '../dataStorage/storage';
+import { getCurrentUser } from '../utils/user';
 
 export default class AboutScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -23,24 +24,35 @@ export default class AboutScreen extends React.Component {
   };
 
   state = {
-    windowWidth: Dimensions.get('window').width
+    windowWidth: Dimensions.get('window').width,
+    appUpdateAvailable: false
   };
+
+  listeners = [];
 
   componentWillMount() {
     navigateBack = () => this.props.navigation.pop();
-    this.listener = EventRegister.addEventListener('screenDimensionChanged', (window) => {
-      this.setState({ windowWidth: window.width });
-    });
+    this.listeners.push(EventRegister.addEventListener('screenDimensionChanged', (window) => {
+      this.setState({ windowWidth: window.width, windowHeight: window.height });
+    }));
+
+    this.listeners.push(EventRegister.addEventListener('appUpdateAvailable', () => {
+      this.setState({ appUpdateAvailable: true });
+    }));
+
+    getCurrentUser().checkForAppUpdateAsync(true);
   }
 
   componentWillUnmount() {
-    EventRegister.removeEventListener(this.listener);
+    this.listeners.forEach(listener => {
+      EventRegister.removeEventListener(listener);
+    });
   }
 
   render() {
     const version = `${appVersion} (SDK${Constants.manifest.sdkVersion})`;
     return (
-      <View style={{ flex: 1, backgroundColor: 'white' }}>
+      <ScrollView style={{ flex: 1, backgroundColor: 'white' }}>
         <View style={{
           marginTop: 10,
           marginHorizontal: 10,
@@ -78,14 +90,29 @@ export default class AboutScreen extends React.Component {
         }}>
           <Text style={{ fontSize: 18, marginHorizontal: 20, marginTop: 10, fontWeight: 'bold' }}>{getI18nText('版本')}</Text>
           <Text style={{ fontSize: 18, marginHorizontal: 20, fontWeight: 'bold' }}>{version}</Text>
-          <Button
-            icon={{ name: "refresh", size: 20, color: "white" }}
-            title="Reload"
-            buttonStyle={{ backgroundColor: Colors.yellow, margin: 10, borderRadius: 30, paddingLeft: 10, paddingRight: 20 }}
-            onPress={() => Updates.reload()}
-          />
+          <View>
+            <Button
+              icon={{ name: "refresh", size: 20, color: "white" }}
+              title="Reload"
+              buttonStyle={{ backgroundColor: Colors.yellow, margin: 10, borderRadius: 30, paddingLeft: 10, paddingRight: 20 }}
+              onPress={() => Updates.reload()}
+            />
+            {
+              this.state.appUpdateAvailable &&
+              <View
+                style={{
+                  position: 'absolute',
+                  backgroundColor: 'red',
+                  height: 9,
+                  width: 9,
+                  borderRadius: 9,
+                  right: 20,
+                  top: 15
+                }} />
+            }
+          </View>
         </View>
-      </View>
+      </ScrollView>
     );
   }
 }

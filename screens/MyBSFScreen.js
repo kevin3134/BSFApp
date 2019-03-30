@@ -1,6 +1,6 @@
 import React from 'react';
 import { getI18nText } from '../utils/I18n';
-import { Platform, WebView, View, ActivityIndicator, Dimensions, TouchableOpacity, Image } from 'react-native';
+import { Platform, WebView, View, ActivityIndicator, Dimensions, TouchableOpacity, Image, Linking } from 'react-native';
 import Colors from '../constants/Colors';
 import { EventRegister } from 'react-native-event-listeners';
 import { NavigationActions } from 'react-navigation';
@@ -29,7 +29,7 @@ export default class MyBSFScreen extends React.Component {
       headerRight: (
         <View style={{ marginRight: 10, flexDirection: 'row' }}>
           <TouchableOpacity onPress={() => {
-            WebBrowser.openBrowserAsync('https://www.mybsf.org');
+            Linking.openURL('https://www.mybsf.org');
           }}>
             <FontAwesome name={Platform.OS === 'ios' ? 'safari' : 'chrome'} size={34} color='white' />
           </TouchableOpacity>
