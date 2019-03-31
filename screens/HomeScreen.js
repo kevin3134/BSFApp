@@ -140,6 +140,16 @@ class HomeScreen extends React.Component {
       }));
     }));
 
+    this.props.navigation.addListener('willFocus', () => {
+      getCurrentUser().checkForAppUpdateAsync();
+      // Workaround: For some reason, when event is triggered TabIcon cannot be updated, so we proactively check it here
+      const hasAppUpdate = getCurrentUser().getAppUpdateAvailable();
+      this.props.navigation.dispatch(NavigationActions.setParams({
+        params: { hasAppUpdate },
+        key: 'Settings',
+      }));
+    });
+
     checkForContentUpdate = () => this.checkForContentUpdate(true);
     userHome = () => this.props.navigation.navigate('UserProfile');
     syncUserData = () => this.syncUserData();
@@ -250,8 +260,6 @@ class HomeScreen extends React.Component {
   }
 
   goToLesson(lesson) {
-    getCurrentUser().checkForAppUpdateAsync();
-
     let parsed = lesson.name.split(' ');
     this.props.navigation.navigate('Lesson', { lesson, title: parsed[1] });
   }

@@ -29,7 +29,7 @@ import { EventRegister } from 'react-native-event-listeners';
     bibleVersion: getCurrentUser().getBibleVersionDisplayName(),
     fontSize: getCurrentUser().getFontSize(),
     user: {},
-    appUpdateAvailable: false
+    appUpdateAvailable: getCurrentUser().getAppUpdateAvailable()
   };
 
   listeners = [];
@@ -38,6 +38,17 @@ import { EventRegister } from 'react-native-event-listeners';
     this.listeners.push(EventRegister.addEventListener('appUpdateAvailable', (hasAppUpdate) => {
       this.setState({ appUpdateAvailable: hasAppUpdate });
     }));
+
+    this.props.navigation.addListener('willFocus', () => {
+      getCurrentUser().checkForAppUpdateAsync();
+      // Workaround: For some reason, when event is triggered TabIcon cannot be updated, so we proactively check it here
+      const hasAppUpdate = getCurrentUser().getAppUpdateAvailable();
+      this.setState({ appUpdateAvailable: hasAppUpdate });
+      this.props.navigation.dispatch(NavigationActions.setParams({
+        params: { hasAppUpdate },
+        key: 'Settings',
+      }));
+    });
 
     this.onCellphoneChanged();
   }

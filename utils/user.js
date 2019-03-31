@@ -535,6 +535,11 @@ export default class User {
   }
 
   lastCheckAppUpdateDay = -1;
+  appUpdateAvailable = false;
+
+  getAppUpdateAvailable() {
+    return this.appUpdateAvailable;
+  }
 
   async checkForAppUpdateAsync(force) {
     const today = (new Date()).getDate();
@@ -546,6 +551,7 @@ export default class User {
 
     try {
       const { isAvailable } = await Updates.checkForUpdateAsync();
+      this.appUpdateAvailable = isAvailable;
       if (isAvailable) {
         EventRegister.emit('appUpdateAvailable', isAvailable);
       }

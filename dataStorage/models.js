@@ -106,7 +106,7 @@ export const Models = {
         // { name: "Mounce Reverse-Interlinear New Testament", id: "mounce" },
         { name: "The Message", id: "msg" },
         // { name: "New American Bible Revised Edition", id: "nabre" },
-        // { name: "New American Standard Bible", id: "nasb" },
+        { name: "New American Standard Bible", id: "nasb" },
         // { name: "New Century Version", id: "ncv" },
         // { name: "New English Translation", id: "net" },
         // { name: "New International Reader's Version", id: "nirv" },
