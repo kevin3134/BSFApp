@@ -3,7 +3,7 @@ export const CachePolicy = {
   AsyncStorage: 2,
 };
 
-const HostServer = 'http://bsf.turbozv.com';
+const HostServer = 'http://bsf.gtinternational.org';
 const HostHttpsServer = 'https://mycbsf.org';
 export const Models = {
   HostServer,
