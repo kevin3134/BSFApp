@@ -219,8 +219,16 @@ class UserHomeScreen extends React.Component {
     }
   }
 
+  validateEmail(mail) {
+    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+      return true;
+    }
+
+    return false;
+  }
+
   async createUser() {
-    if (!this.state.email || this.state.email.length < 6) {
+    if (!this.state.email || this.state.email.length < 6 || !this.validateEmail(this.state.email)) {
       this.emailInput.shake();
       this.emailInput.focus();
       return;
@@ -249,7 +257,8 @@ class UserHomeScreen extends React.Component {
       this.setState({ busy: true });
       const body = {
         email: this.state.email,
-        pass: this.state.password
+        pass: this.state.password,
+        cellphone: getCurrentUser().getCellphone() || ''
       };
       const result = await callWebServiceAsync(`${Models.HostHttpsServer}/api.php?c=createUser`, '', 'POST', [], body);
       const succeed = await showWebServiceCallErrorsAsync(result);

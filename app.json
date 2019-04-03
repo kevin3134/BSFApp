@@ -5,7 +5,7 @@
     "slug": "CBSFApp",
     "privacy": "public",
     "sdkVersion": "32.0.0",
-    "version": "2019.3.27",
+    "version": "2019.4.2",
     "primaryColor": "#cccccc",
     "icon": "./assets/images/icon.png",
     "splash": {
@@ -24,7 +24,7 @@
     "ios": {
       "icon": "./assets/images/icon.png",
       "appStoreUrl": "https://itunes.apple.com/us/app/cbsf/id1229869018?mt=8",
-      "buildNumber": "2",
+      "buildNumber": "1",
       "bundleIdentifier": "org.CBSF.bsfclass",
       "supportsTablet": true
     },
