@@ -50,6 +50,9 @@ export default class AboutScreen extends React.Component {
   }
 
   render() {
+
+    console.log("about screen!!!!!!!!!!!!!!!!!!");
+
     const version = `${appVersion} (SDK${Constants.manifest.sdkVersion})`;
     return (
       <ScrollView style={{ flex: 1, backgroundColor: 'white' }}>

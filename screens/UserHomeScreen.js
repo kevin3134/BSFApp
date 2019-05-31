@@ -516,6 +516,9 @@ class UserHomeScreen extends React.Component {
 
   render() {
     const userLoggedIn = !!this.getUserLoggedIn();
+
+    console.log("user home screen!!!!!!!!!!!!!!!!!!");
+
     return (
       <KeyboardAvoidingView style={styles.container} behavior='padding' keyboardVerticalOffset={0} >
         <ScrollView style={{ flex: 1, backgroundColor: 'white', width: this.state.windowWidth }}>

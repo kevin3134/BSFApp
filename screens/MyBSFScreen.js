@@ -81,6 +81,9 @@ export default class MyBSFScreen extends React.Component {
   }
 
   render() {
+
+    console.log("myBSFS screen!!!!!!!!!!!!!!!!!!");
+
     return (
       <View style={{ flex: 1 }}>
         <WebView

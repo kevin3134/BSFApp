@@ -132,6 +132,9 @@ import { getI18nText } from '../utils/I18n';
     const fontSize = getCurrentUser().getBibleFontSize();
     const verses = this.props.passage;
     let contentUI;
+
+    console.log("bible screen!!!!!!!!!!!!!!!!!!");
+
     // Using text (some Android device cannot show CJK or even UTF8 in WebView)
     if (Platform.OS == 'android') {
       let line = '';

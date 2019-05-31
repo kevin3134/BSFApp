@@ -49,6 +49,9 @@ export default class SetPhoneScreen extends React.Component {
   }
 
   render() {
+
+    console.log("setphone screen!!!!!!!!!!!!!!!!!!");
+
     return (
       <KeyboardAvoidingView style={styles.container} behavior='padding' keyboardVerticalOffset={0}>
         <View style={{ flex: 1, backgroundColor: 'white' }}>

@@ -67,6 +67,9 @@ export default class AttendanceSelectLeaderScreen extends React.Component {
   }
 
   render() {
+
+    console.log("attendace selectleader screen!!!!!!!!!!!!!!");
+
     if (!this.state.leaders) {
       return (
         <ActivityIndicator

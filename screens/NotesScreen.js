@@ -16,6 +16,9 @@ export default class HomeTrainingScreen extends React.Component {
   };
 
   render() {
+
+    console.log("notes screen!!!!!!!!!!!!!!!!!!");
+
     return (
       <View style={{ flex: 1 }}>
         <WebView

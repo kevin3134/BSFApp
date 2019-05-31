@@ -28,17 +28,22 @@ export default TabNavigator(
         const { routeName } = navigation.state;
         let image;
         let showUpdateRedDot = false;
+
         switch (routeName) {
           case 'Home':
+            //console.log("Home!!!");
             image = focused ? require('../assets/images/Classes.On.png') : require('../assets/images/Classes.Off.png');
             break;
           case 'MyBSFScreen':
+            //console.log("MyBSFScreen!!!");
             image = focused ? require('../assets/images/mybsf.On.png') : require('../assets/images/mybsf.Off.png');
             break;
           case 'AudioBible':
+            //console.log("AudioBible!!!");
             image = focused ? require('../assets/images/AudioBible.On.png') : require('../assets/images/AudioBible.Off.png');
             break;
           case 'Settings':
+            //console.log("Settings!!!");
             image = focused ? require('../assets/images/MySettings.On.png') : require('../assets/images/MySettings.Off.png');
             showUpdateRedDot = navigation.state.params && navigation.state.params.hasAppUpdate;
             break;

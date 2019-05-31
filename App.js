@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, View, Dimensions, Text } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View, Dimensions, Text, Alert } from 'react-native';
 import { AppLoading, Constants } from 'expo';
 import RootNavigation from './navigation/RootNavigation';
 import createStore from './store/createStore'

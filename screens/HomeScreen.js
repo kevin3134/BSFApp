@@ -165,6 +165,19 @@ class HomeScreen extends React.Component {
     });
   }
 
+  componentDidMount() {
+    try{
+      let lessonloc = getCurrentUser().getlessonLoc();
+      let tabloc = getCurrentUser().gettabLoc();
+      if(lessonloc!=null&&tabloc!=null){
+        this.goToLesson(lessonloc);
+      }
+      console.log("lesson loc is "+ lessonloc);
+    }catch(e){
+      console.log("cannot load lesson");
+    }
+  }
+
   downloadCallback(downloadProgress) {
     if (downloadProgress.totalBytesExpectedToWrite == -1) {
       progress = 1;
@@ -261,6 +274,14 @@ class HomeScreen extends React.Component {
 
   goToLesson(lesson) {
     let parsed = lesson.name.split(' ');
+
+    //if change lesson remove tab loc and scroll loc
+    if (getCurrentUser().getlessonLoc() != lesson) {
+      getCurrentUser().setlessonLocAsync(lesson);
+      getCurrentUser().settabLocAsync(0);
+      getCurrentUser().setscrollLocAsync(0);
+    }
+
     this.props.navigation.navigate('Lesson', { lesson, title: parsed[1] });
   }
 

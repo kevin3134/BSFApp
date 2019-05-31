@@ -149,6 +149,9 @@ export default class AttendanceLessonScreen extends React.Component {
   }
 
   render() {
+
+    console.log("attendace lesson screen!!!!!!!!!!!!!");
+
     if (!this.state.attendance) {
       return (
         <ActivityIndicator

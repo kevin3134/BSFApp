@@ -45,6 +45,9 @@ export default class HomeDiscussionScreen extends React.Component {
   }
 
   render() {
+
+    console.log("home discussion screen!!!!!!!!!!!!!!!!!!");
+
     if (this.state.loading) {
       return (
         <View style={styles.container}>

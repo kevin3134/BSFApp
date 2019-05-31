@@ -92,6 +92,9 @@ export default class GlobalChatScreen extends React.Component {
   }
 
   render() {
+
+    console.log("globel chat screen!!!!!!!!!!!!!!!!!!");
+
     if (this.state.loading) {
       return (
         <ActivityIndicator

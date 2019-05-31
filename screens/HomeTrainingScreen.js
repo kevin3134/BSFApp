@@ -26,6 +26,9 @@ export default class HomeTrainingScreen extends React.Component {
 
   render() {
     let keyIndex = 0;
+
+    console.log("home traing screen!!!!!!!!!!!!!!!!!!");
+
     return (
       <View style={styles.container}>
         {

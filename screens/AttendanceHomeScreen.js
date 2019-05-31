@@ -140,6 +140,9 @@ export default class AttendanceHomeScreen extends React.Component {
   }
 
   render() {
+
+    console.log("attendace home screen!!!!!!!!!!!!!!");
+
     if (!this.state.data) {
       return (
         <ActivityIndicator

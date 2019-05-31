@@ -139,6 +139,9 @@ export default class AudioBibleScreen extends React.Component {
   }
 
   render() {
+
+    console.log("audio bible screen!!!!!!!!!!!!!!!");
+
     return (
       <ScrollView
         style={{ flex: 1, backgroundColor: 'white' }}>

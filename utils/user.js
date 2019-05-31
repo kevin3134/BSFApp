@@ -24,7 +24,7 @@ async function loadUser() {
       return JSON.parse(value);
     }
     console.log("loadUser: no user to load");
-  } catch (error) {
+  } catch (error) { 
     alert(error);
     console.log(error);
   }
@@ -61,6 +61,9 @@ export default class User {
   email = '';
   accessToken = '';
   nickname = 'BSFer';
+  lessonLoc = null;
+  tabLoc = null;
+  scrollLoc = null;
 
   isBibleVersionValid(version) {
     if (!this.validBibles) {
@@ -113,6 +116,16 @@ export default class User {
       }
       if (existingUser.nickname) {
         this.nickname = existingUser.nickname;
+      }
+      //add for existing user
+      if (existingUser.lessonLoc) {
+        this.lessonLoc = existingUser.lessonLoc;
+      }
+      if (existingUser.tabLoc) {
+        this.tabLoc = existingUser.tabLoc;
+      }
+      if (existingUser.scrollLoc) {
+        this.scrollLoc = existingUser.scrollLoc;
       }
       this.loggedOn = true;
 
@@ -183,6 +196,58 @@ export default class User {
     this.logUserInfo();
 
     await this.loadUserPermissionsAsync(this.cellphone);
+  }
+
+  //set the location
+  async setlessonLocAsync(lessonLoc) {
+    if (!this.isLoggedOn()) {
+      return;
+    }
+
+    this.lessonLoc = lessonLoc;
+    await saveUserAsync(this.getUserInfo());
+    this.logUserInfo();
+  }
+
+  async settabLocAsync(tabLoc) {
+    if (!this.isLoggedOn()) {
+      return;
+    }
+
+    this.tabLoc = tabLoc;
+    await saveUserAsync(this.getUserInfo());
+    this.logUserInfo();
+  }
+
+  async setscrollLocAsync(scrollLoc) {
+    if (!this.isLoggedOn()) {
+      return;
+    }
+
+    this.scrollLoc = scrollLoc;
+    await saveUserAsync(this.getUserInfo());
+    this.logUserInfo();
+  }
+
+  getlessonLoc() {
+    if (!this.isLoggedOn()) {
+      return null;
+    }
+    return this.lessonLoc;
+  }
+
+  gettabLoc() {
+    if (!this.isLoggedOn()) {
+      return null;
+    }
+    return this.tabLoc;
+  }  
+
+  getscrollLoc() {
+    if (!this.isLoggedOn()) {
+      return null;
+    }
+    return this.scrollLoc;
   }
 
   async setAudioBibleBook(id) {
@@ -357,7 +422,10 @@ export default class User {
       readDiscussions: this.readDiscussions,
       email: this.email,
       accessToken: this.accessToken,
-      nickname: this.nickname
+      nickname: this.nickname,
+      lessonLoc: this.lessonLoc,
+      tabLoc: this.tabLoc,
+      scrollLoc: this.scrollLoc
     };
   }
 

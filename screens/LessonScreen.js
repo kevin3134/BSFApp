@@ -10,7 +10,8 @@ import {
   Image,
   TouchableHighlight,
   KeyboardAvoidingView,
-  Dimensions
+  Dimensions,
+  Alert
 } from 'react-native';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -27,8 +28,14 @@ class LessonScreen extends React.Component {
     return {
       title: navigation.state.params && navigation.state.params.title ? navigation.state.params.title : '',
       headerLeft: (
-        <View style={{ marginLeft: 10 }}>
-          <TouchableOpacity onPress={() => navigateBack()}>
+        <View style={{ marginLeft: 10 }}>  
+          <TouchableOpacity 
+          onPress={() => {
+            navigateBack();
+            getCurrentUser().settabLocAsync(null); 
+            getCurrentUser().setlessonLocAsync(null);
+            getCurrentUser().setscrollLocAsync(0);
+            }}>
             <Image
               style={{ width: 34, height: 34 }}
               source={require('../assets/images/GoBack.png')} />
@@ -61,7 +68,19 @@ class LessonScreen extends React.Component {
 
     if (Platform.OS != 'ios') {
       this.goToFirstPage();
-    }
+    }else{
+      //inital tab for ios (android not work)
+      try{
+        let tabloc = getCurrentUser().gettabLoc();
+        if(tabloc!=null){
+          this.initialPage = tabloc;
+        } 
+        console.log("tab loc is "+ tabloc);
+      }catch(e){
+        console.log("cannot load tab");
+      }
+    }  
+
   }
 
   componentWillUnmount() {
@@ -70,7 +89,7 @@ class LessonScreen extends React.Component {
     }
   }
 
-  navigateTo(page, data) {
+  navigateTo(page, data) { 
     data.text = this.props.lesson.name + '\n' + data.text;
     this.props.navigation.navigate(page, data);
   }
@@ -88,12 +107,18 @@ class LessonScreen extends React.Component {
     }
   }
 
-  goToPassage(book, verse) {
+  goToPassage(book, verse) {    
     this.props.navigation.navigate('Bible', { book, verse, title: getI18nBibleBook(book) + verse });
   }
 
   onImportAndExport() {
     this.props.navigation.navigate('AnswerManage');
+  }
+
+  updateScrollLoc(event) { 
+    if (getCurrentUser().getscrollLoc() != event.nativeEvent.contentOffset.y) {
+      getCurrentUser().setscrollLocAsync(event.nativeEvent.contentOffset.y);
+    }
   }
 
   renderTab(name, page, isTabActive, onPressHandler, onLayoutHandler) {
@@ -138,7 +163,11 @@ class LessonScreen extends React.Component {
     const dayQuestions = this.props.lesson.dayQuestions;
     const content =
       <ScrollableTabView
-        ref={ref => this.tabView = ref}
+        scrollWithoutAnimation = {true}
+        ref={ref => {
+          this.tabView = ref;
+        }}
+
         {...scrollableStyleProps}
         initialPage={this.initialPage}
         renderTabBar={() => <LessonTab key={dayQuestions} dayQuestions={[
@@ -147,13 +176,106 @@ class LessonScreen extends React.Component {
           dayQuestions.three.questions,
           dayQuestions.four.questions,
           dayQuestions.five.questions,
-          dayQuestions.six.questions]} />}>
-        <DayQuestions tabLabel='1' goToPassage={this.goToPassage} day={dayQuestions.one} memoryVerse={this.props.lesson.memoryVerse} />
-        <DayQuestions tabLabel='2' goToPassage={this.goToPassage} day={dayQuestions.two} />
-        <DayQuestions tabLabel='3' goToPassage={this.goToPassage} day={dayQuestions.three} />
-        <DayQuestions tabLabel='4' goToPassage={this.goToPassage} day={dayQuestions.four} />
-        <DayQuestions tabLabel='5' goToPassage={this.goToPassage} day={dayQuestions.five} />
-        <DayQuestions tabLabel='6' goToPassage={this.goToPassage} day={dayQuestions.six} />
+          dayQuestions.six.questions]} 
+          />}>
+            
+          <ScrollView tabLabel='1' 
+            ref = {ref => {
+              if(ref){
+                if (Platform.OS != 'ios') {
+                  setTimeout(() => ref.scrollTo({x:0,y:getCurrentUser().getscrollLoc() }), 50);
+                }else{
+                  ref.scrollTo({x:0,y:getCurrentUser().getscrollLoc()});
+                }
+              } 
+            }} 
+            onScroll={event => { 
+              this.updateScrollLoc(event);
+            }}>
+            <DayQuestions goToPassage={this.goToPassage} day={dayQuestions.one} memoryVerse={this.props.lesson.memoryVerse} />   
+          </ScrollView>
+
+          <ScrollView tabLabel='2'
+            ref = {ref => {
+              if(ref){
+                if (Platform.OS != 'ios') {
+                  setTimeout(() => ref.scrollTo({x:0,y:getCurrentUser().getscrollLoc() }), 50);
+                }else{
+                  ref.scrollTo({x:0,y:getCurrentUser().getscrollLoc()});
+                }
+                //setTimeout(() => ref.scrollTo({x:0,y:getCurrentUser().getscrollLoc() }), 50);
+              }            
+            }}  
+            onScroll={event => { 
+              this.updateScrollLoc(event);
+            }}>
+            <DayQuestions goToPassage={this.goToPassage} day={dayQuestions.two}/>
+          </ScrollView>
+
+          <ScrollView tabLabel='3'
+            ref = {ref => {
+              if(ref){
+                if (Platform.OS != 'ios') {
+                  setTimeout(() => ref.scrollTo({x:0,y:getCurrentUser().getscrollLoc() }), 50);
+                }else{
+                  ref.scrollTo({x:0,y:getCurrentUser().getscrollLoc()});
+                }
+              }            
+            }}  
+            onScroll={event => { 
+              this.updateScrollLoc(event);
+            }}>          
+            <DayQuestions goToPassage={this.goToPassage} day={dayQuestions.three}/>
+          </ScrollView>
+
+          <ScrollView tabLabel='4'
+            ref = {ref => {
+              if(ref){
+                if (Platform.OS != 'ios') {
+                  setTimeout(() => ref.scrollTo({x:0,y:getCurrentUser().getscrollLoc() }), 50);
+                }else{
+                  ref.scrollTo({x:0,y:getCurrentUser().getscrollLoc()});
+                }
+              }            
+            }} 
+            onScroll={event => { 
+              this.updateScrollLoc(event);
+            }}>          
+            <DayQuestions goToPassage={this.goToPassage} day={dayQuestions.four} />
+          </ScrollView>
+
+          <ScrollView tabLabel='5'
+            ref = {ref => {
+              if(ref){
+                if (Platform.OS != 'ios') {
+                  setTimeout(() => ref.scrollTo({x:0,y:getCurrentUser().getscrollLoc() }), 50);
+                }else{
+                  ref.scrollTo({x:0,y:getCurrentUser().getscrollLoc()});
+                }
+              }            
+            }}
+            onScroll={event => { 
+              this.updateScrollLoc(event);
+            }}>          
+            <DayQuestions goToPassage={this.goToPassage} day={dayQuestions.five} />
+          </ScrollView>
+
+          <ScrollView tabLabel='6'
+            ref = {ref => {
+              if(ref){
+                if (Platform.OS != 'ios') {
+                  setTimeout(() => ref.scrollTo({x:0,y:getCurrentUser().getscrollLoc() }), 50);
+                }else{
+                  ref.scrollTo({x:0,y:getCurrentUser().getscrollLoc()});
+                }
+              }             
+            }}
+            onScroll={event => { 
+              this.updateScrollLoc(event);
+            }}>          
+            <DayQuestions goToPassage={this.goToPassage} day={dayQuestions.six} /> 
+          </ScrollView>
+
       </ScrollableTabView>
 
     // TODO:[Wei] KeyboardAwareScrollView works on iOS but not Android, KeyboardAvoidingView works on Android, but not iOS :(
@@ -172,6 +294,26 @@ class LessonTab extends React.Component {
 
   componentWillUnmount() {
     EventRegister.removeEventListener(this.listener);
+  }
+
+  componentDidMount() { 
+    try{
+      let tabloc = getCurrentUser().gettabLoc();
+      if(tabloc!=null&&tabloc!=this.props.activeTab){
+        //in android, initalpage and goToPage not work, unless using settimeout
+        setTimeout(() => this.props.goToPage(tabloc), 50);
+      } 
+    }catch(e){
+      console.log("cannot load scroll");
+    }
+  }
+  
+  //update when change tab, also remove the scroll loc
+  updateTabLoc(tabLoc) {
+    if (getCurrentUser().gettabLoc() != tabLoc) {
+      getCurrentUser().settabLocAsync(tabLoc);
+      getCurrentUser().setscrollLocAsync(0);
+    }
   }
 
   render() {
@@ -197,7 +339,11 @@ class LessonTab extends React.Component {
                 top: 3
               }} />) : null;
             return (
-              <TouchableOpacity key={name} onPress={() => this.props.goToPage(page)}>
+              <TouchableOpacity key={name} 
+              onPress={() => {
+                this.props.goToPage(page)
+                this.updateTabLoc(page)
+              }}> 
                 <View style={{
                   marginHorizontal: 0.5,
                   width: (containerWidth / numberOfTabs) - 1,
@@ -383,7 +529,7 @@ const BibleQuote = (props) => {
   lastBibleQuote = props.book;
   return (
     <View style={{ flexDirection: 'row' }}>
-      <TouchableOpacity onPress={() => props.goToPassage(props.book, props.verse)}>
+      <TouchableOpacity onPress={() => props.goToPassage(props.book, props.verse) }>
         <View style={styles.bibleQuote}>
           <Text style={{ color: 'white', fontSize: getCurrentUser().getLessonFontSize() - 2 }} selectable={true}>{repeat ? '' : getI18nBibleBook(props.book)}{props.verse}</Text>
         </View>

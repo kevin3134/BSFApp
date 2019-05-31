@@ -91,6 +91,9 @@ export default class AttendanceGroupScreen extends React.Component {
     const lesson = this.props.navigation.state.params.lesson;
     const lessonTitle = this.props.navigation.state.params.lessonTitle;
     const substitutes = this.state.substitutes;
+
+    console.log("attendace group screen!!!!!!!!!!!!!!");
+
     return (
       <View style={{ flex: 1 }}>
         <ScrollView

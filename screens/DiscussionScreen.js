@@ -207,6 +207,9 @@ export default class DiscussionScreen extends React.Component {
   }
 
   render() {
+
+    console.log("discussion screen!!!!!!!!!!!!!!!!!!");
+
     if (this.state.loading) {
       return (
         <ActivityIndicator

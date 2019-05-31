@@ -114,6 +114,9 @@ class AnswerManageScreen extends React.Component {
   }
 
   render() {
+
+    console.log("answer manage screen!!!!!!!!!!!!!");
+
     return (
       <KeyboardAvoidingView style={styles.container} behavior='padding' keyboardVerticalOffset={0}>
       
